@@ -74,4 +74,13 @@ class OfferController
         }
     }
 
+    /**
+     * @Route("/offers/{id}", name="delete_offer", methods={"DELETE"})
+     */
+    public function delete($id): JsonResponse
+    {
+        $this->offerService->deleteOffer($id);
+        return new JsonResponse(['status' => 'Offer deleted'], Response::HTTP_NO_CONTENT);
+    }
+
 }

@@ -36,4 +36,10 @@ class OfferRepository implements OfferRepositoryInterface
             "id"=>$id,
         ]);
     }
+
+    public function deleteOffer($offer)
+    {
+        $this->entityManager->remove($offer);
+        $this->entityManager->flush();
+    }
 }

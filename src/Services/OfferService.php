@@ -39,7 +39,7 @@ class OfferService
     {
         if($this->checkContent($data)){
 
-            if($offer = $this->getOneById($id))
+            if(!$offer = $this->getOneById($id))
                 throw new NotFoundHttpException('error, wrong offer index');
             $this->setValues($data, $offer);
             $this->offerRepository->save($offer);
@@ -78,6 +78,14 @@ class OfferService
         $offer->setImage($data['image']);
 
         return $offer;
+    }
+
+    public function deleteOffer($id)
+    {
+        if(!$offer = $this->getOneById($id)){
+            throw new NotFoundHttpException('error, wrong offer index');
+        };
+        $this->offerRepository->deleteOffer($offer);
     }
 
 }
