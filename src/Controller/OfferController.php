@@ -62,4 +62,16 @@ class OfferController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
+    /**
+     * @Route("/offers/{id}", name="update_offer", methods={"PUT"})
+     */
+    public function update($id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $offer = $this->offerService->updateOffer($id, $data);
+        if($offer) {
+            return new JsonResponse($offer->toArray(), Response::HTTP_OK);
+        }
+    }
+
 }

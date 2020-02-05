@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entity\Offer;
 use App\Repository\Interfaces\OfferRepositoryInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OfferService
 {
@@ -21,37 +22,62 @@ class OfferService
 
     public function saveOffer($data): bool
     {
-        $name = $data['name'];
-        $size = $data['size'];
-        $area = $data['area'];
-        $price = $data['price'];
-        $description = $data['description'];
-        $image = $data['image'];
-        if( empty($name) ||
-            empty($size) ||
-            empty($area) ||
-            empty($price) ||
-            empty($description) ||
-            empty($image))
-            return false;
-        else
-        {
+        if($this->checkContent($data)){
+
             $offer = new Offer();
             $offer->setIsActive(0);
-            $offer->setName($name);
-            $offer->setSize($size);
-            $offer->setArea($area);
-            $offer->setPrice($price);
-            $offer->setDescription($description);
-            $offer->setImage($image);
+
+            $this->setValues($data, $offer);
             $this->offerRepository->save($offer);
+
             return true;
         }
+        return false;
+    }
 
+    public function updateOffer($id, $data)
+    {
+        if($this->checkContent($data)){
+
+            if($offer = $this->getOneById($id))
+                throw new NotFoundHttpException('error, wrong offer index');
+            $this->setValues($data, $offer);
+            $this->offerRepository->save($offer);
+
+            return $offer;
+        }
+        return false;
     }
 
     public function getOneById($id)
     {
         return $this->offerRepository->findOneById($id);
     }
+
+    public function checkContent($data): bool
+    {
+        if( empty($data['name']) ||
+            empty($data['size']) ||
+            empty($data['area']) ||
+            empty($data['price']) ||
+            empty($data['description']) ||
+            empty($data['image'])){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function setValues($data, Offer $offer): Offer
+    {
+        $offer->setName($data['name']);
+        $offer->setSize($data['size']);
+        $offer->setArea($data['area']);
+        $offer->setPrice($data['price']);
+        $offer->setDescription($data['description']);
+        $offer->setImage($data['image']);
+
+        return $offer;
+    }
+
 }
