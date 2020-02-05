@@ -22,7 +22,7 @@ class Offer
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer", length=255)
      */
     private $area;
 
@@ -34,7 +34,7 @@ class Offer
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $url;
+    private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -44,7 +44,7 @@ class Offer
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $portal;
+    private $size;
 
     public function getId(): ?int
     {
@@ -63,12 +63,12 @@ class Offer
         return $this;
     }
 
-    public function getArea(): ?string
+    public function getArea(): ?int
     {
         return $this->area;
     }
 
-    public function setArea(string $area): self
+    public function setArea(int $area): self
     {
         $this->area = $area;
 
@@ -87,14 +87,14 @@ class Offer
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getDescription(): ?string
     {
-        return $this->url;
+        return $this->description;
     }
 
-    public function setUrl(string $url): self
+    public function setDescription(string $description): self
     {
-        $this->url = $url;
+        $this->description = $description;
 
         return $this;
     }
@@ -111,15 +111,28 @@ class Offer
         return $this;
     }
 
-    public function getPortal(): ?string
+    public function getSize(): ?int
     {
-        return $this->portal;
+        return $this->size;
     }
 
-    public function setPortal(string $portal): self
+    public function setSize(string $size): self
     {
-        $this->portal = $portal;
+        $this->size = $size;
 
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'area' => $this->getArea(),
+            'price' => $this->getPrice(),
+            'description' => $this->getDescription(),
+            'image' => $this->getImage(),
+            'size' => $this->getSize(),
+        ];
     }
 }
