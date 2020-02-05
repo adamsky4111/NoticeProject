@@ -13,10 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/offers")
- */
-
 class OfferController
 {
     private $offerService;
@@ -26,7 +22,7 @@ class OfferController
     }
 
     /**
-     * @Route("/add", name="add_offer", methods={"POST"})
+     * @Route("/offers/add", name="add_offer", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -41,7 +37,7 @@ class OfferController
     }
 
     /**
-     * @Route("/{id}", name="find_one_offer", methods={"GET"})
+     * @Route("/offers/{id}", name="get_one_offer", methods={"GET"})
      */
     public function get($id): JsonResponse
     {
@@ -50,4 +46,20 @@ class OfferController
 
         return new JsonResponse($data, Response::HTTP_OK);
     }
+
+    /**
+     * @Route("/offers", name="get_all_Offers", methods={"GET"})
+     */
+    public function getAll(): JsonResponse
+    {
+        $offers = $this->offerService->getAll();
+        $data = [];
+
+        foreach ($offers as $offer) {
+            $data[] = $offer->toArray();
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
 }
