@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Offer;
 use App\Services\OfferService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/offers")
  */
 
-class OfferController extends AbstractController
+class OfferController
 {
     private $offerService;
     public function __construct(OfferService $offerService)
@@ -30,7 +31,6 @@ class OfferController extends AbstractController
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
         $isOK = ($this->offerService->saveOffer($data));
         if($isOK){
             return new JsonResponse(['status' => 'Offer created'], Response::HTTP_CREATED);
@@ -38,8 +38,16 @@ class OfferController extends AbstractController
         else{
             throw new NotFoundHttpException('error');
         }
-
     }
 
+    /**
+     * @Route("/{id}", name="find_one_offer", methods={"GET"})
+     */
+    public function get($id): JsonResponse
+    {
+        $offer = $this->offerService->getOneById($id);
+        $data = $offer->toArray();
 
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
 }

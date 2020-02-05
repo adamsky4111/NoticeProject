@@ -47,5 +47,11 @@ class OfferService
             $this->offerRepository->save($offer);
             return true;
         }
+
+    }
+
+    public function getOneById($id)
+    {
+        return $this->offerRepository->findOneById($id);
     }
 }

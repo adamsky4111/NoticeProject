@@ -32,7 +32,7 @@ class OfferRepository implements OfferRepositoryInterface
 
     public function findOneById($id)
     {
-        $this->repository->findOneBy([
+        return $this->repository->findOneBy([
             "id"=>$id,
         ]);
     }
