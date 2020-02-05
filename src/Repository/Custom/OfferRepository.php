@@ -19,18 +19,17 @@ class OfferRepository implements OfferRepositoryInterface
         $this->repository = $this->entityManager->getRepository(Offer::class);
     }
 
-    public function save($offers)
+    public function save($offer)
     {
-        foreach ($offers as $offer){
-            $this->entityManager->persist($offer);
-        }
-        $this->entityManager = flush();
+        $this->entityManager->persist($offer);
+        $this->entityManager->flush();
     }
 
     public function  findAll()
     {
         return $this->repository->findAll();
     }
+
 
 
 }
