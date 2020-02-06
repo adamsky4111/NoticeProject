@@ -4,9 +4,10 @@ namespace App\Services;
 
 use App\Entity\Offer;
 use App\Repository\Interfaces\OfferRepositoryInterface;
+use App\Services\Interfaces\OfferServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class OfferService
+class OfferService implements OfferServiceInterface
 {
     private $offerRepository;
 
