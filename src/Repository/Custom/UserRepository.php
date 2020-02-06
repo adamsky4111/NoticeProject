@@ -22,14 +22,22 @@ class UserRepository implements UserRepositoryInterface, PasswordUpgraderInterfa
         $this->repository = $this->entityManager->getRepository(User::class);
     }
 
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    public function upgradePassword(UserInterface $user,
+                                    string $newEncodedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+            throw new UnsupportedUserException(
+                sprintf('Instances of "%s" are not supported.', \get_class($user))
+            );
         }
 
         $user->setPassword($newEncodedPassword);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    public function findOneByEmail($email)
+    {
+        $this->repository->findOneBy(['email' => $email]);
     }
 }

@@ -8,4 +8,6 @@ interface UserRepositoryInterface
 {
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void;
 
+    public function findOneByEmail($email);
+
 }
