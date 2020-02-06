@@ -93,6 +93,9 @@
     "fabpot/goutte": {
         "version": "v4.0.0"
     },
+    "fzaninotto/faker": {
+        "version": "v1.9.1"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
