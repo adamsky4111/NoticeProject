@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repository\Custom;
 
 use App\Entity\Offer;
