@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -50,6 +52,11 @@ class Offer
      * @ORM\Column(type="string", length=255)
      */
     private $size;
+
+    public function __construct()
+    {
+        $this->apiTokens = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -152,4 +159,6 @@ class Offer
             'size' => $this->getSize(),
         ];
     }
+
+
 }
