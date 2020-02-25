@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OfferController
 {
+
     private $offerService;
     public function __construct(OfferServiceInterface $offerService)
     {
