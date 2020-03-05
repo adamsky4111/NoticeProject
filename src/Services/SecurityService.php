@@ -24,10 +24,15 @@ class SecurityService implements SecurityServiceInterface
         $username = $request->request->get('username');
         $password = $request->request->get('password');
 
+        if($this->repository->checkIfExist($username)){
+            return false;
+        }
         $user = new User();
         $user->setEmail($username);
         $user->setPassword($this->encoder->encodePassword($user, $password));
 
         $this->repository->save($user);
+        return true;
     }
+
 }

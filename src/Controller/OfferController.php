@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Offer;
 use App\Services\Interfaces\OfferServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

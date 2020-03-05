@@ -24,4 +24,13 @@ class UserRepository implements UserRepositoryInterface
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }
+
+    public function checkIfExist($username)
+    {
+        if(!($this->repository->findOneBy(['email' => $username]))) {
+            return false;
+        }
+        return true;
+    }
+
 }
