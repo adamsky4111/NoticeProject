@@ -2,29 +2,32 @@
 
 namespace App\Controller;
 
-use App\Services\Interfaces\OfferServiceInterface;
+use App\Services\Interfaces\NoticeServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OfferController
+class NoticeController
 {
 
-    private $offerService;
-    public function __construct(OfferServiceInterface $offerService)
+    private $noticeService;
+    public function __construct(NoticeServiceInterface $noticeService)
     {
-        $this->offerService = $offerService;
+        $this->noticeService = $noticeService;
     }
 
     /**
      * @Route("/offers/add", name="add_offer", methods={"POST"})
+     * @param Request $request
+     * @return JsonResponse
      */
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $isOK = ($this->offerService->saveOffer($data));
+        dd($data);
+        $isOK = ($this->noticeService->saveNotice($data));
         if($isOK){
             return new JsonResponse(['status' => 'Offer created'], Response::HTTP_CREATED);
         }
@@ -38,7 +41,7 @@ class OfferController
      */
     public function get($id): JsonResponse
     {
-        $offer = $this->offerService->getOneById($id);
+        $offer = $this->noticeService->getOneById($id);
         $data = $offer->toArray();
 
         return new JsonResponse($data, Response::HTTP_OK);
@@ -49,7 +52,7 @@ class OfferController
      */
     public function getAll(): JsonResponse
     {
-        $offers = $this->offerService->getAll();
+        $offers = $this->noticeService->getAll();
         $data = [];
 
         foreach ($offers as $offer) {
@@ -65,7 +68,7 @@ class OfferController
     public function update($id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $offer = $this->offerService->updateOffer($id, $data);
+        $offer = $this->noticeService->updateNotice($id, $data);
         if($offer) {
             return new JsonResponse($offer->toArray(), Response::HTTP_OK);
         }
@@ -76,7 +79,7 @@ class OfferController
      */
     public function delete($id): JsonResponse
     {
-        $this->offerService->deleteOffer($id);
+        $this->noticeService->deleteOffer($id);
         return new JsonResponse(['status' => 'Offer deleted'], Response::HTTP_NO_CONTENT);
     }
 
