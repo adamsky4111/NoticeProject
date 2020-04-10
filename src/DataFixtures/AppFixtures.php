@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Offer;
+use App\Entity\Notice;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -12,15 +12,16 @@ class AppFixtures extends Fixture
     {
 
         for ($i = 0; $i < 50; $i++) {
-            $offer = new Offer();
-            $offer->setIsActive(1);
-            $offer->setName('name '.$i);
-            $offer->setSize(mt_rand(10, 100));
-            $offer->setArea(mt_rand(100, 500));
-            $offer->setPrice(mt_rand(10000, 500000));
-            $offer->setDescription('description '.$i );
-            $offer->setImage('image '.$i );
-            $manager->persist($offer);
+            $notice = new Notice();
+            $notice->setIsActive(1);
+            $notice->setName('name '.$i);
+            $notice->setProvince('province');
+            $notice->setCity('city');
+            $notice->setPrice(mt_rand(10000, 500000));
+            $notice->setDescription('description '.$i );
+            $notice->setImage('image '.$i );
+            $notice->setAmount(mt_rand(1,100));
+            $manager->persist($notice);
         }
 
         $manager->flush();
