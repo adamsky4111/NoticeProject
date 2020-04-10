@@ -19,7 +19,7 @@ class AppFixtures extends Fixture
             $notice->setCity('city');
             $notice->setPrice(mt_rand(10000, 500000));
             $notice->setDescription('description '.$i );
-            $notice->setImage('image '.$i );
+            $notice->setImages('image '.$i );
             $notice->setAmount(mt_rand(1,100));
             $manager->persist($notice);
         }

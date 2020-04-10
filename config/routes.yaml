@@ -7,7 +7,7 @@ api_login_check:
 
 notices:
   resource: App\Controller\NoticeController
-  prefix: api
+  prefix: api/notices/
 
 #register:
 #  path: /api/register

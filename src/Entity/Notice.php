@@ -49,7 +49,7 @@ class Notice
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $image;
+    private $images;
 
     /**
      * @ORM\Column(type="integer")
@@ -133,14 +133,14 @@ class Notice
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImages(): ?string
     {
-        return $this->image;
+        return $this->images;
     }
 
-    public function setImage(string $image): self
+    public function setImages(string $images): self
     {
-        $this->image = $image;
+        $this->images = $images;
 
         return $this;
     }
@@ -166,7 +166,7 @@ class Notice
             'city' => $this->getCity(),
             'price' => $this->getPrice(),
             'description' => $this->getDescription(),
-            'image' => $this->getImage(),
+            'image' => $this->getImages(),
             'amount' => $this->getAmount(),
         ];
     }

@@ -40,12 +40,12 @@ class NoticeService implements NoticeServiceInterface
     {
         if($this->checkContent($data)){
 
-            if(!$offer = $this->getOneById($id))
+            if(!$notice = $this->getOneById($id))
                 throw new NotFoundHttpException('error, wrong offer index');
-            $this->setValues($data, $offer);
-            $this->noticeRepository->save($offer);
+            $this->setValues($data, $notice);
+            $this->noticeRepository->save($notice);
 
-            return $offer;
+            return $notice;
         }
         return false;
     }
@@ -63,7 +63,7 @@ class NoticeService implements NoticeServiceInterface
             empty($data['city']) ||
             empty($data['price']) ||
             empty($data['description']) ||
-            empty($data['image'])){
+            empty($data['images'])){
             return false;
         }
 
@@ -72,23 +72,23 @@ class NoticeService implements NoticeServiceInterface
 
     public function setValues($data, Notice $notice): Notice
     {
-        $offer->setName($data['name']);
-        $offer->setAmount($data['size']);
-        $offer->setProvince($data['province']);
-        $offer->setCity($data['city']);
-        $offer->setPrice($data['price']);
-        $offer->setDescription($data['description']);
-        $offer->setImage($data['image']);
+        $notice->setName($data['name']);
+        $notice->setAmount($data['amount']);
+        $notice->setProvince($data['province']);
+        $notice->setCity($data['city']);
+        $notice->setPrice($data['price']);
+        $notice->setDescription($data['description']);
+        $notice->setImages($data['images']);
 
-        return $offer;
+        return $notice;
     }
 
     public function deleteNotice($id)
     {
-        if(!$offer = $this->getOneById($id)){
+        if(!$notice = $this->getOneById($id)){
             throw new NotFoundHttpException('error, wrong offer index');
         };
-        $this->noticeRepository->deleteNotice($offer);
+        $this->noticeRepository->deleteNotice($notice);
     }
 
 }

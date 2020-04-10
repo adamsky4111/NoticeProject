@@ -19,17 +19,16 @@ class NoticeController
     }
 
     /**
-     * @Route("/offers/add", name="add_offer", methods={"POST"})
+     * @Route("/add", name="add_offer", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        dd($data);
         $isOK = ($this->noticeService->saveNotice($data));
         if($isOK){
-            return new JsonResponse(['status' => 'Offer created'], Response::HTTP_CREATED);
+            return new JsonResponse(['status' => 'Notice created'], Response::HTTP_CREATED);
         }
         else{
             throw new NotFoundHttpException('error');
@@ -37,50 +36,50 @@ class NoticeController
     }
 
     /**
-     * @Route("/offers/{id}", name="get_one_offer", methods={"GET"})
+     * @Route("/{id}", name="get_one_offer", methods={"GET"})
      */
     public function get($id): JsonResponse
     {
-        $offer = $this->noticeService->getOneById($id);
-        $data = $offer->toArray();
+        $notice = $this->noticeService->getOneById($id);
+        $data = $notice->toArray();
 
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
     /**
-     * @Route("/offers", name="get_all_Offers", methods={"GET"})
+     * @Route("/", name="get_all_Offers", methods={"GET"})
      */
     public function getAll(): JsonResponse
     {
-        $offers = $this->noticeService->getAll();
+        $notices = $this->noticeService->getAll();
         $data = [];
 
-        foreach ($offers as $offer) {
-            $data[] = $offer->toArray();
+        foreach ($notices as $notice) {
+            $data[] = $notice->toArray();
         }
 
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
     /**
-     * @Route("/offers/{id}", name="update_offer", methods={"PUT"})
+     * @Route("/{id}", name="update_offer", methods={"PUT"})
      */
     public function update($id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $offer = $this->noticeService->updateNotice($id, $data);
-        if($offer) {
-            return new JsonResponse($offer->toArray(), Response::HTTP_OK);
+        $notice = $this->noticeService->updateNotice($id, $data);
+        if($notice) {
+            return new JsonResponse(['status' => 'Notice Updated'], Response::HTTP_OK);
         }
     }
 
     /**
-     * @Route("/offers/{id}", name="delete_offer", methods={"DELETE"})
+     * @Route("/{id}", name="delete_offer", methods={"DELETE"})
      */
     public function delete($id): JsonResponse
     {
-        $this->noticeService->deleteOffer($id);
-        return new JsonResponse(['status' => 'Offer deleted'], Response::HTTP_NO_CONTENT);
+        $this->noticeService->deleteNotice($id);
+        return new JsonResponse(['status' => 'Notice Deleted'], Response::HTTP_OK);
     }
 
 }

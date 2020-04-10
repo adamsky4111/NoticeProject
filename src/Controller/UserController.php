@@ -23,6 +23,7 @@ class UserController extends AbstractController
     public function register(Request $request, SecurityServiceInterface $securityService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        dd($data);
         $errors = [];
 
         if ($securityService->usernameExist($data['username'])) {
