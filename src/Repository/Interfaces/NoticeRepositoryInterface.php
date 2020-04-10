@@ -2,10 +2,10 @@
 
 namespace App\Repository\Interfaces;
 
-interface OfferRepositoryInterface
+interface NoticeRepositoryInterface
 {
-    public function save($offer);
+    public function save($notice);
     public function findAll();
     public function findOneById($id);
-    public function deleteOffer($offer);
+    public function deleteNotice($notice);
 }
