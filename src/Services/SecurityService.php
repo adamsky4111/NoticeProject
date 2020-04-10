@@ -19,20 +19,25 @@ class SecurityService implements SecurityServiceInterface
         $this->encoder = $encoder;
     }
 
-    public function saveUser(Request $request)
+    public function saveUser($data)
     {
-        $username = $request->request->get('username');
-        $password = $request->request->get('password');
-
-        if($this->repository->checkIfExist($username)){
-            return false;
-        }
         $user = new User();
-        $user->setEmail($username);
-        $user->setPassword($this->encoder->encodePassword($user, $password));
-
+        $user->setEmail($data['email']);
+        $user->setUsername($data['username']);
+        $user->setPassword($this->encoder->encodePassword($user, $data['password']));
+        
         $this->repository->save($user);
         return true;
+    }
+
+    public function usernameExist($username): bool
+    {
+        return $this->repository->checkIfUsernameExist($username);
+    }
+
+    public function emailExist($email): bool
+    {
+        return $this->repository->checkifEmailExist($email);
     }
 
 }

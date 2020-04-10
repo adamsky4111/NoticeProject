@@ -2,48 +2,48 @@
 
 namespace App\Services;
 
-use App\Entity\Offer;
-use App\Repository\Interfaces\OfferRepositoryInterface;
-use App\Services\Interfaces\OfferServiceInterface;
+use App\Entity\Notice;
+use App\Repository\Interfaces\NoticeRepositoryInterface;
+use App\Services\Interfaces\NoticeServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class OfferService implements OfferServiceInterface
+class NoticeService implements NoticeServiceInterface
 {
-    private $offerRepository;
+    private $noticeRepository;
 
-    public function __construct(OfferRepositoryInterface $offerRepository)
+    public function __construct(NoticeRepositoryInterface $noticeRepository)
     {
-        $this->offerRepository = $offerRepository;
+        $this->noticeRepository = $noticeRepository;
     }
 
     public function getAll()
     {
-        return $this->offerRepository->findAll();
+        return $this->noticeRepository->findAll();
     }
 
-    public function saveOffer($data): bool
+    public function saveNotice($data): bool
     {
         if($this->checkContent($data)){
 
-            $offer = new Offer();
-            $offer->setIsActive(0);
+            $notice = new Notice();
+            $notice->setIsActive(0);
 
-            $this->setValues($data, $offer);
-            $this->offerRepository->save($offer);
+            $this->setValues($data, $notice);
+            $this->noticeRepository->save($notice);
 
             return true;
         }
         return false;
     }
 
-    public function updateOffer($id, $data)
+    public function updateNotice($id, $data)
     {
         if($this->checkContent($data)){
 
             if(!$offer = $this->getOneById($id))
                 throw new NotFoundHttpException('error, wrong offer index');
             $this->setValues($data, $offer);
-            $this->offerRepository->save($offer);
+            $this->noticeRepository->save($offer);
 
             return $offer;
         }
@@ -52,14 +52,15 @@ class OfferService implements OfferServiceInterface
 
     public function getOneById($id)
     {
-        return $this->offerRepository->findOneById($id);
+        return $this->noticeRepository->findOneById($id);
     }
 
     public function checkContent($data): bool
     {
         if( empty($data['name']) ||
-            empty($data['size']) ||
-            empty($data['area']) ||
+            empty($data['amount']) ||
+            empty($data['province']) ||
+            empty($data['city']) ||
             empty($data['price']) ||
             empty($data['description']) ||
             empty($data['image'])){
@@ -69,11 +70,12 @@ class OfferService implements OfferServiceInterface
         return true;
     }
 
-    public function setValues($data, Offer $offer): Offer
+    public function setValues($data, Notice $notice): Notice
     {
         $offer->setName($data['name']);
-        $offer->setSize($data['size']);
-        $offer->setArea($data['area']);
+        $offer->setAmount($data['size']);
+        $offer->setProvince($data['province']);
+        $offer->setCity($data['city']);
         $offer->setPrice($data['price']);
         $offer->setDescription($data['description']);
         $offer->setImage($data['image']);
@@ -81,12 +83,12 @@ class OfferService implements OfferServiceInterface
         return $offer;
     }
 
-    public function deleteOffer($id)
+    public function deleteNotice($id)
     {
         if(!$offer = $this->getOneById($id)){
             throw new NotFoundHttpException('error, wrong offer index');
         };
-        $this->offerRepository->deleteOffer($offer);
+        $this->noticeRepository->deleteNotice($offer);
     }
 
 }
