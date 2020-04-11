@@ -3,27 +3,46 @@
 namespace App\Services;
 
 use App\Services\Interfaces\UploadFilesServiceInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 
 class UploadFilesService implements UploadFilesServiceInterface
 {
 
-    public function uploadFiles($files)
+    public function uploadFiles($files, $imgDirectory)
     {
-        // TODO: Implement uploadFiles() method.
+        $fileNames = [];
+        foreach ($files as $file) {
+            $fileNames[] = $this->uploadFile($file, $imgDirectory);
+        }
+
+        return $this->filesToString($fileNames);
     }
 
-    public function uploadFile($file)
+    public function uploadFile(File $file, $imgDirectory )
     {
-        // TODO: Implement uploadFile() method.
+        $fileName = $this->generateUniqueFileName() . '.' . $file->guessExtension();
+
+        try {
+            $file->move(
+                $imgDirectory,
+                $fileName
+            );
+        } catch (FileException $e) {
+
+           throw $e;
+        }
+
+        return $fileName;
     }
 
-    function fileToString($stringFiles, $file)
+    function filesToString($stringFiles)
     {
-        // TODO: Implement fileToString() method.
+        return implode($stringFiles, ',');
     }
 
     function generateUniqueFileName()
     {
-        // TODO: Implement generateUniqueFileName() method.
+        return md5(uniqid());
     }
 }
