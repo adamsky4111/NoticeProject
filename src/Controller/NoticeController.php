@@ -19,7 +19,7 @@ class NoticeController
     }
 
     /**
-     * @Route("/add", name="add_offer", methods={"POST"})
+     * @Route("/new", name="new_offer", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */

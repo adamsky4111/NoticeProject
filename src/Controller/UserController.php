@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/add", name="add_user", methods={"POST"})
+     * @Route("/new", name="new_user", methods={"POST"})
      * @param Request $request
      * @param SecurityServiceInterface $securityService
      * @return JsonResponse
@@ -23,24 +23,23 @@ class UserController extends AbstractController
     public function register(Request $request, SecurityServiceInterface $securityService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        dd($data);
+
         $errors = [];
 
         if ($securityService->usernameExist($data['username'])) {
-            array_push($errors, 'usernameTaken');
+            $errors[] = 'username taken';
         }
 
         if ($securityService->emailExist($data['email'])) {
-            array_push($errors, 'emailTaken');
+            $errors[] = 'email taken';
         }
 
         if ($errors) {
-            return new JsonResponse(['errors' => $errors], Response::HTTP_NOT_ACCEPTABLE);
-        }
-        else {
+            return new JsonResponse(['status' => false, 'message' => $errors], Response::HTTP_NOT_ACCEPTABLE);
+        } else {
             $securityService->saveUser($data);
 
-            return new JsonResponse(['status' => 'User created'], Response::HTTP_CREATED);
+            return new JsonResponse(['status' => true, 'message' => 'User created'], Response::HTTP_CREATED);
         }
     }
 

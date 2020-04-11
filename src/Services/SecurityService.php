@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityService implements SecurityServiceInterface
@@ -25,7 +24,8 @@ class SecurityService implements SecurityServiceInterface
         $user->setEmail($data['email']);
         $user->setUsername($data['username']);
         $user->setPassword($this->encoder->encodePassword($user, $data['password']));
-        
+        $user->setIsActive(false);
+
         $this->repository->save($user);
         return true;
     }

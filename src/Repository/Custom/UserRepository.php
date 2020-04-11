@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repository\Custom;
-
 
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
@@ -19,6 +17,7 @@ class UserRepository implements UserRepositoryInterface
         $this->entityManager = $entityManager;
         $this->repository = $this->entityManager->getRepository(User::class);
     }
+
     public function save(User $user)
     {
         $this->entityManager->persist($user);
