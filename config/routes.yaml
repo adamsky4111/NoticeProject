@@ -5,10 +5,10 @@
 api_login_check:
   path: /api/login_check
 
-offers:
-  resource: App\Controller\OfferController
-  prefix: api
+notices:
+  resource: App\Controller\NoticeController
+  prefix: api/notices/
 
-register:
-  path: /register
-  controller: App\Controller\SecurityController:register
+#register:
+#  path: /api/register
+#  controller: App\Controller\SecurityController:register

@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\Doctrine\OfferRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Doctrine\NoticeRepository")
  */
-class Offer
+class Notice
 {
     /**
      * @ORM\Id()
@@ -27,9 +27,14 @@ class Offer
     private $name;
 
     /**
-     * @ORM\Column(type="integer", length=255)
+     * @ORM\Column(type="string", length=255)
      */
-    private $area;
+    private $province;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $city;
 
     /**
      * @ORM\Column(type="integer")
@@ -44,12 +49,12 @@ class Offer
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $image;
+    private $images;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      */
-    private $size;
+    private $amount;
 
     public function getId(): ?int
     {
@@ -80,14 +85,26 @@ class Offer
         return $this;
     }
 
-    public function getArea(): ?int
+    public function getProvince(): ?string
     {
-        return $this->area;
+        return $this->province;
     }
 
-    public function setArea(int $area): self
+    public function setProvince(string $province): self
     {
-        $this->area = $area;
+        $this->province = $province;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }
@@ -116,26 +133,26 @@ class Offer
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImages(): ?string
     {
-        return $this->image;
+        return $this->images;
     }
 
-    public function setImage(string $image): self
+    public function setImages(string $images): self
     {
-        $this->image = $image;
+        $this->images = $images;
 
         return $this;
     }
 
-    public function getSize(): ?int
+    public function getAmount(): ?int
     {
-        return $this->size;
+        return $this->amount;
     }
 
-    public function setSize(string $size): self
+    public function setAmount(int $amount): self
     {
-        $this->size = $size;
+        $this->amount = $amount;
 
         return $this;
     }
@@ -145,11 +162,12 @@ class Offer
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'area' => $this->getArea(),
+            'province' => $this->getProvince(),
+            'city' => $this->getCity(),
             'price' => $this->getPrice(),
             'description' => $this->getDescription(),
-            'image' => $this->getImage(),
-            'size' => $this->getSize(),
+            'images' => $this->getImages(),
+            'amount' => $this->getAmount(),
         ];
     }
 }

@@ -3,11 +3,11 @@
 
 namespace App\Repository\Custom;
 
-use App\Entity\Offer;
-use App\Repository\Interfaces\OfferRepositoryInterface;
+use App\Entity\Notice;
+use App\Repository\Interfaces\NoticeRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class OfferRepository implements OfferRepositoryInterface
+class NoticeRepository implements NoticeRepositoryInterface
 {
     private $repository;
 
@@ -16,12 +16,12 @@ class OfferRepository implements OfferRepositoryInterface
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $this->entityManager->getRepository(Offer::class);
+        $this->repository = $this->entityManager->getRepository(Notice::class);
     }
 
-    public function save($offer)
+    public function save($notice)
     {
-        $this->entityManager->persist($offer);
+        $this->entityManager->persist($notice);
         $this->entityManager->flush();
     }
 
@@ -37,9 +37,9 @@ class OfferRepository implements OfferRepositoryInterface
         ]);
     }
 
-    public function deleteOffer($offer)
+    public function deleteNotice($notice)
     {
-        $this->entityManager->remove($offer);
+        $this->entityManager->remove($notice);
         $this->entityManager->flush();
     }
 }

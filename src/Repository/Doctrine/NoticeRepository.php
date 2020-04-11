@@ -2,21 +2,21 @@
 
 namespace App\Repository\Doctrine;
 
-use App\Entity\Offer;
+use App\Entity\Notice;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method Offer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Offer|null findOneBy(array $criteria, array $orderBy = null)
- * @method Offer[]    findAll()
- * @method Offer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Notice|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Notice|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Notice[]    findAll()
+ * @method Notice[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OfferRepository extends ServiceEntityRepository
+class NoticeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Offer::class);
+        parent::__construct($registry, Notice::class);
     }
 
     // /**

@@ -18,6 +18,16 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
@@ -36,6 +46,18 @@ class User implements UserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -57,7 +79,12 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->username;
+    }
+
+    public function setUsername(string $username)
+    {
+        $this->username = $username;
     }
 
     /**
@@ -84,7 +111,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
