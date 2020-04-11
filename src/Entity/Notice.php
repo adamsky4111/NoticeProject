@@ -166,7 +166,7 @@ class Notice
             'city' => $this->getCity(),
             'price' => $this->getPrice(),
             'description' => $this->getDescription(),
-            'image' => $this->getImages(),
+            'images' => $this->getImages(),
             'amount' => $this->getAmount(),
         ];
     }

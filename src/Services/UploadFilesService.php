@@ -19,7 +19,7 @@ class UploadFilesService implements UploadFilesServiceInterface
         return $this->filesToString($fileNames);
     }
 
-    public function uploadFile(File $file, $imgDirectory )
+    public function uploadFile(File $file, $imgDirectory)
     {
         $fileName = $this->generateUniqueFileName() . '.' . $file->guessExtension();
 
@@ -30,7 +30,7 @@ class UploadFilesService implements UploadFilesServiceInterface
             );
         } catch (FileException $e) {
 
-           throw $e;
+            throw $e;
         }
 
         return $fileName;
@@ -38,7 +38,7 @@ class UploadFilesService implements UploadFilesServiceInterface
 
     function filesToString($stringFiles)
     {
-        return implode($stringFiles, ',');
+        return implode($stringFiles, ';');
     }
 
     function generateUniqueFileName()

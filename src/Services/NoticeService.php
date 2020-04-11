@@ -5,15 +5,18 @@ namespace App\Services;
 use App\Entity\Notice;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
 use App\Services\Interfaces\NoticeServiceInterface;
+use App\Services\Interfaces\UploadFilesServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NoticeService implements NoticeServiceInterface
 {
     private $noticeRepository;
+    private $uploadFilesService;
 
-    public function __construct(NoticeRepositoryInterface $noticeRepository)
+    public function __construct(UploadFilesServiceInterface $uploadFilesService, NoticeRepositoryInterface $noticeRepository)
     {
         $this->noticeRepository = $noticeRepository;
+        $this->uploadFilesService = $uploadFilesService;
     }
 
     public function getAll()
@@ -21,14 +24,15 @@ class NoticeService implements NoticeServiceInterface
         return $this->noticeRepository->findAll();
     }
 
-    public function saveNotice($data): bool
+    public function saveNotice($data, $files, $imgDirectory): bool
     {
-        if($this->checkContent($data)){
+        if ($this->checkContent($data)) {
 
             $notice = new Notice();
             $notice->setIsActive(0);
-
+            $images = $this->uploadFilesService->uploadFiles($files, $imgDirectory);
             $this->setValues($data, $notice);
+            $notice->setImages($images);
             $this->noticeRepository->save($notice);
 
             return true;
@@ -38,10 +42,9 @@ class NoticeService implements NoticeServiceInterface
 
     public function updateNotice($id, $data)
     {
-        if($this->checkContent($data)){
-
-            if(!$notice = $this->getOneById($id))
-                throw new NotFoundHttpException('error, wrong offer index');
+        if ($this->checkContent($data)) {
+            if (!$notice = $this->getOneById($id))
+                throw new NotFoundHttpException('error, wrong notice index');
             $this->setValues($data, $notice);
             $this->noticeRepository->save($notice);
 
@@ -57,13 +60,12 @@ class NoticeService implements NoticeServiceInterface
 
     public function checkContent($data): bool
     {
-        if( empty($data['name']) ||
+        if (empty($data['name']) ||
             empty($data['amount']) ||
             empty($data['province']) ||
             empty($data['city']) ||
             empty($data['price']) ||
-            empty($data['description']) ||
-            empty($data['images'])){
+            empty($data['description'])) {
             return false;
         }
 
@@ -78,15 +80,14 @@ class NoticeService implements NoticeServiceInterface
         $notice->setCity($data['city']);
         $notice->setPrice($data['price']);
         $notice->setDescription($data['description']);
-        $notice->setImages($data['images']);
 
         return $notice;
     }
 
     public function deleteNotice($id)
     {
-        if(!$notice = $this->getOneById($id)){
-            throw new NotFoundHttpException('error, wrong offer index');
+        if (!$notice = $this->getOneById($id)) {
+            throw new NotFoundHttpException('error, wrong notice index');
         };
         $this->noticeRepository->deleteNotice($notice);
     }

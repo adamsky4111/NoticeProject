@@ -6,13 +6,13 @@ use App\Services\Interfaces\NoticeServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class NoticeController
 {
 
     private $noticeService;
+
     public function __construct(NoticeServiceInterface $noticeService)
     {
         $this->noticeService = $noticeService;
@@ -26,12 +26,11 @@ class NoticeController
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $isOK = ($this->noticeService->saveNotice($data));
-        if($isOK){
-            return new JsonResponse(['status' => 'Notice created'], Response::HTTP_CREATED);
-        }
-        else{
-            throw new NotFoundHttpException('error');
+        $isOK = ($this->noticeService->saveNotice($data, $request->files, '../public/uploads/img'));
+        if ($isOK) {
+            return new JsonResponse(['status' => true, 'message' => 'Notice created'], Response::HTTP_CREATED);
+        } else {
+            return new JsonResponse(['status' => false, 'message' => 'create failed'], Response::HTTP_NOT_ACCEPTABLE);
         }
     }
 
@@ -63,14 +62,17 @@ class NoticeController
 
     /**
      * @Route("/{id}", name="update_offer", methods={"PUT"})
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
      */
     public function update($id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $notice = $this->noticeService->updateNotice($id, $data);
-        if($notice) {
-            return new JsonResponse(['status' => 'Notice Updated'], Response::HTTP_OK);
-        }
+        if ($notice) {
+            return new JsonResponse(['status' => true, 'message' => 'Notice Updated'], Response::HTTP_OK);
+        } else return new JsonResponse(['status' => false, 'message' => 'update failed'], Response::HTTP_NOT_ACCEPTABLE);
     }
 
     /**
@@ -78,8 +80,9 @@ class NoticeController
      */
     public function delete($id): JsonResponse
     {
-        $this->noticeService->deleteNotice($id);
-        return new JsonResponse(['status' => 'Notice Deleted'], Response::HTTP_OK);
+        if ($this->noticeService->deleteNotice($id)) {
+            return new JsonResponse(['status' => true, 'message' => 'Notice Deleted'], Response::HTTP_OK);
+        } else return new JsonResponse(['status' => false, 'message' => 'delete failed'], Response::HTTP_NOT_ACCEPTABLE);
     }
 
 }
