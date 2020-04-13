@@ -11,4 +11,12 @@ interface UserRepositoryInterface
     public function checkIfUsernameExist($username);
 
     public function checkIfEmailExist($email);
+
+    public function findUserByUsername($username): User;
+
+    public function findUserById($id): User;
+
+    public function findUsers(): array;
+
+    public function delete($username = null, $id = null, $email = null);
 }
