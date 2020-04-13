@@ -123,21 +123,6 @@ class UserControllerTest extends WebTestCase
         }
     }
 
-    public function testDelete()
-    {
-        if ($users = $this->userRepository->findAll()) {
-            $user = $users[0];
-            $client = static::createClient();
-
-            $client->request(
-                'DELETE',
-                $this->url . 'api/users/' . $user->getUsername()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('no users in database.');
-        }
-    }
 
     public function testGetAllUsers()
     {
@@ -202,5 +187,21 @@ class UserControllerTest extends WebTestCase
             ])
         );
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+    public function testDelete()
+    {
+        if ($users = $this->userRepository->findAll()) {
+            $user = $users[0];
+            $client = static::createClient();
+
+            $client->request(
+                'DELETE',
+                $this->url . 'api/users/' . $user->getUsername()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('no users in database.');
+        }
     }
 }
