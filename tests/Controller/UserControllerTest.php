@@ -187,4 +187,20 @@ class UserControllerTest extends WebTestCase
         );
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
+
+    public function testForgotPassword()
+    {
+        $client = static::createClient();
+        $client->request(
+            'POST',
+            $this->url . 'api/forgot',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'email' => 'foo@wp.get',
+            ])
+        );
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
 }
