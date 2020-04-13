@@ -36,8 +36,10 @@ class NoticeController
 
     /**
      * @Route("/{id}", name="get_one_offer", methods={"GET"})
+     * @param $id
+     * @return JsonResponse
      */
-    public function get($id): JsonResponse
+    public function getOne($id): JsonResponse
     {
         $notice = $this->noticeService->getOneById($id);
         $data = $notice->toArray();

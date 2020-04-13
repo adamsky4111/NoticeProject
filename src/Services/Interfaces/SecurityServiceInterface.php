@@ -23,4 +23,6 @@ interface SecurityServiceInterface
     public function getUsers(): array;
 
     public function deleteUser($username);
+
+    public function changePassword($id, $newPassword);
 }

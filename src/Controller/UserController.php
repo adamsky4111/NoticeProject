@@ -15,36 +15,82 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
+     * @var SecurityServiceInterface
+     */
+    private $securityService;
+
+    public function __construct(SecurityServiceInterface $securityService)
+    {
+        $this->securityService = $securityService;
+    }
+
+    /**
      * @Route("/new", name="new_user", methods={"POST"})
      * @param Request $request
-     * @param SecurityServiceInterface $securityService
      * @return JsonResponse
      */
-    public function register(Request $request, SecurityServiceInterface $securityService): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
         $errors = [];
 
-        if ($securityService->usernameExist($data['username'])) {
+        if ($this->securityService->usernameExist($data['username'])) {
             $errors[] = 'username taken';
         }
 
-        if ($securityService->emailExist($data['email'])) {
+        if ($this->securityService->emailExist($data['email'])) {
             $errors[] = 'email taken';
         }
 
         if ($errors) {
             return new JsonResponse(['status' => false, 'message' => $errors], Response::HTTP_NOT_ACCEPTABLE);
         } else {
-            $securityService->saveUser($data);
+            $this->securityService->saveUser($data);
 
             return new JsonResponse(['status' => true, 'message' => 'User created'], Response::HTTP_CREATED);
         }
     }
 
-//    public function api()
-//    {
-//        return new Response(sprintf('Logged in as %s', $this->getUser()->getUsername()));
-//    }
+    /**
+     * @Route("/", name="get_all_users", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAll(Request $request)
+    {
+        $users = $this->securityService->getUsers();
+        $data = [];
+
+        foreach ($users as $user) {
+            $data[] = $user->toArray();
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/{username}", name="get_one_user", methods={"GET"})
+     * @param $username
+     * @return JsonResponse
+     */
+    public function getOne($username): JsonResponse
+    {
+        $user = $this->securityService->getUserByUsername($username);
+        $data = $user->toArray();
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/{username}", name="delete_user", methods={"DELETE"})
+     * @param $username
+     * @return JsonResponse
+     */
+    public function delete($username): JsonResponse
+    {
+        if ($this->securityService->deleteUser($username)) {
+            return new JsonResponse(['status' => true, 'message' => 'Notice Deleted'], Response::HTTP_OK);
+        } else return new JsonResponse(['status' => false, 'message' => 'delete failed'], Response::HTTP_NOT_ACCEPTABLE);
+    }
 }
