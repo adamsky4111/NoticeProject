@@ -2,14 +2,11 @@
 
 namespace App\Tests;
 
-use App\Entity\Notice;
 use App\Entity\User;
-use App\Repository\Interfaces\NoticeRepositoryInterface;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -134,6 +131,38 @@ class UserControllerTest extends WebTestCase
             $client->request(
                 'DELETE',
                 $this->url . 'api/users/' . $user->getUsername()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('no users in database.');
+        }
+    }
+
+    public function testGetAllUsers()
+    {
+        $client = static::createClient();
+        $client->request(
+            'GET',
+            $this->url . 'api/users/'
+        );
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+    public function testChangePassword()
+    {
+        if ($users = $this->userRepository->findAll()) {
+            $user = $users[0];
+            $client = static::createClient();
+
+            $client->request(
+                'PUT',
+                $this->url . 'api/users/' . $user->getId(),
+                [],
+                [],
+                array('CONTENT_TYPE' => 'application/json'),
+                json_encode([
+                    'password' => 'newPassword',
+                ])
             );
             $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         } else {
