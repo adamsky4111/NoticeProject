@@ -19,7 +19,19 @@ class UserControllerTest extends WebTestCase
 
     private $user = [
         'username' => 'foo',
-        'email' => 'foo@wo.get',
+        'email' => 'foo@wp.get',
+        'password' => 'password',
+    ];
+
+    private $userForEmailValidate = [
+        'username' => 'boo',
+        'email' => 'foo@wp.get',
+        'password' => 'password',
+    ];
+
+    private $userForUsernameValidate = [
+        'username' => 'foo',
+        'email' => 'foo@wp.get2',
         'password' => 'password',
     ];
 
@@ -49,5 +61,52 @@ class UserControllerTest extends WebTestCase
             ->getRepository(User::class);
     }
 
+    public function testRegister()
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            $this->url . 'api/users/new',
+            [],
+            [],
+            array('CONTENT_TYPE' => 'application/json'),
+            json_encode($this->user)
+        );
+
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+    }
+
+    public function testIfUsernameAlreadyExist()
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            $this->url . 'api/users/new',
+            [],
+            [],
+            array('CONTENT_TYPE' => 'application/json'),
+            json_encode($this->userForEmailValidate)
+        );
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+    }
+
+    public function testIfEmailAlreadyExist()
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            $this->url . 'api/users/new',
+            [],
+            [],
+            array('CONTENT_TYPE' => 'application/json'),
+            json_encode($this->userForUsernameValidate)
+        );
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+    }
 
 }
