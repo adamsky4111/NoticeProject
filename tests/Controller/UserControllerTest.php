@@ -109,4 +109,19 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
     }
 
+    public function testGetOne()
+    {
+        if ($users = $this->userRepository->findAll()) {
+            $user = $users[0];
+            $client = static::createClient();
+
+            $client->request(
+                'GET',
+                $this->url . 'api/users/' . $user->getUsername()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('no users in database.');
+        }
+    }
 }
