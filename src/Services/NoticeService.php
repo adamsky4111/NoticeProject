@@ -90,6 +90,8 @@ class NoticeService implements NoticeServiceInterface
             throw new NotFoundHttpException('error, wrong notice index');
         };
         $this->noticeRepository->deleteNotice($notice);
+
+        return true;
     }
 
 }

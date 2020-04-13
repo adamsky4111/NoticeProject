@@ -7,7 +7,9 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "fabpot/goutte": "^4.0",
+        "guzzlehttp/guzzle": "^6.5",
         "lexik/jwt-authentication-bundle": "^2.6",
+        "nebkam/fluent-test": "^3.0",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/console": "5.0.*",
         "symfony/dotenv": "5.0.*",
@@ -19,7 +21,9 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
-        "symfony/maker-bundle": "^1.14"
+        "symfony/maker-bundle": "^1.14",
+        "symfony/phpunit-bridge": "^5.0",
+        "ext-gd": "*"
     },
     "config": {
         "preferred-install": {
