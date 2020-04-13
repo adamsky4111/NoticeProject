@@ -3,10 +3,10 @@
 namespace App\Tests;
 
 use App\Entity\Notice;
-use App\Repository\Doctrine\NoticeRepository;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -82,8 +82,7 @@ class NoticeControllerTest extends WebTestCase
 
     public function testGetOneNotice()
     {
-        if ($notices = $this->noticeRepository->findAll())
-        {
+        if ($notices = $this->noticeRepository->findAll()) {
             $notice = $notices[0];
             $client = static::createClient();
 
@@ -91,9 +90,32 @@ class NoticeControllerTest extends WebTestCase
                 'DELETE',
                 $this->url . 'api/notices/' . $notice->getId()
             );
-            dd($client->getResponse(), $this->url . 'api/notices/' . $notice->getId());
-            $notice->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        };
-
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        }
+        else {
+            throw new Exception('Database is empty');
+        }
     }
+
+    public function testPut()
+    {
+        if ($notices = $this->noticeRepository->findAll()) {
+            $notice = $notices[0];
+            $client = static::createClient();
+
+            $client->request(
+                'PUT',
+                $this->url . 'api/notices/' . $notice->getId(),
+                [],
+                [],
+                array('CONTENT_TYPE' => 'application/json'),
+                json_encode($this->notice)
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        }
+        else {
+            throw new Exception('Database is empty');
+        }
+    }
+    
 }
