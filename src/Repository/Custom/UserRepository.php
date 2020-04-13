@@ -39,4 +39,40 @@ class UserRepository implements UserRepositoryInterface
         }
         return false;
     }
+
+    public function getUserByUsername($username)
+    {
+        return $this->repository->findOneBy(['username' => $username]);
+    }
+
+    public function getUserById($id)
+    {
+        return $this->repository->findOneBy(['id' => $id]);
+    }
+
+    public function getUsers(): array
+    {
+        return $this->repository->findAll();
+    }
+
+    public function findUserByUsername($username)
+    {
+        return $this->repository->findOneBy(['username' => $username]);
+    }
+
+    public function findUserById($id)
+    {
+        return $this->repository->findOneBy(['id' => $id]);
+    }
+
+    public function findUsers(): array
+    {
+        return $this->repository->findAll();
+    }
+
+    public function delete($user)
+    {
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityService implements SecurityServiceInterface
@@ -40,4 +41,28 @@ class SecurityService implements SecurityServiceInterface
         return $this->repository->checkifEmailExist($email);
     }
 
+    public function getUserByUsername($username)
+    {
+        return $this->repository->findUserByUsername($username);
+    }
+
+    public function getUserById($id)
+    {
+        return $this->repository->findUserById($id);
+    }
+
+    public function getUsers(): array
+    {
+        return $this->repository->findUsers();
+    }
+
+    public function deleteUser($username)
+    {
+        if (!$user = $this->getUserByUsername($username)) {
+            throw new NotFoundHttpException('error, wrong user index');
+        };
+        $this->repository->delete($user);
+
+        return true;
+    }
 }

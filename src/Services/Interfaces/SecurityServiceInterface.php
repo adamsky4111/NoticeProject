@@ -16,11 +16,11 @@ interface SecurityServiceInterface
 
     public function emailExist($email): bool;
 
-    public function getUserByUsername($username): User;
+    public function getUserByUsername($username);
 
-    public function getUserById($id): User;
+    public function getUserById($id);
 
     public function getUsers(): array;
 
-    public function deleteUser($username = null, $id = null, $email = null);
+    public function deleteUser($username);
 }
