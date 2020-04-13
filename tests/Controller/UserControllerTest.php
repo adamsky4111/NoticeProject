@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -159,7 +160,7 @@ class UserControllerTest extends WebTestCase
                 $this->url . 'api/users/' . $user->getId(),
                 [],
                 [],
-                array('CONTENT_TYPE' => 'application/json'),
+                ['CONTENT_TYPE' => 'application/json'],
                 json_encode([
                     'password' => 'newPassword',
                 ])
@@ -168,5 +169,22 @@ class UserControllerTest extends WebTestCase
         } else {
             throw new Exception('no users in database.');
         }
+    }
+
+    public function testLogin()
+    {
+        $client = static::createClient();
+        $client->request(
+            'POST',
+            $this->url . 'api/login_check',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'username' => 'foo@wp.get',
+                'password' => 'password',
+            ])
+        );
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 }

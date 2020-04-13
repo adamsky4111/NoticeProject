@@ -76,24 +76,7 @@ class NoticeControllerTest extends WebTestCase
             array('CONTENT_TYPE' => 'application/json'),
             json_encode($this->notice)
         );
-
         $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
-    }
-
-    public function testGetOneNotice()
-    {
-        if ($notices = $this->noticeRepository->findAll()) {
-            $notice = $notices[0];
-            $client = static::createClient();
-
-            $client->request(
-                'DELETE',
-                $this->url . 'api/notices/' . $notice->getId()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('Database is empty');
-        }
     }
 
     public function testPut()
@@ -132,4 +115,19 @@ class NoticeControllerTest extends WebTestCase
         }
     }
 
+    public function testDelete()
+    {
+        if ($notices = $this->noticeRepository->findAll()) {
+            $notice = $notices[0];
+            $client = static::createClient();
+
+            $client->request(
+                'DELETE',
+                $this->url . 'api/notices/' . $notice->getId()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('Database is empty');
+        }
+    }
 }
