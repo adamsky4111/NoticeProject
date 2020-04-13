@@ -77,6 +77,8 @@ class NoticeController
 
     /**
      * @Route("/{id}", name="delete_offer", methods={"DELETE"})
+     * @param $id
+     * @return JsonResponse
      */
     public function delete($id): JsonResponse
     {

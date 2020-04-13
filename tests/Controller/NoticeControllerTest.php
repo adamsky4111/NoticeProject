@@ -2,8 +2,13 @@
 
 namespace App\Tests;
 
+use App\Entity\Notice;
+use App\Repository\Doctrine\NoticeRepository;
+use App\Repository\Interfaces\NoticeRepositoryInterface;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class NoticeControllerTest extends WebTestCase
@@ -19,11 +24,37 @@ class NoticeControllerTest extends WebTestCase
         'price' => '599',
     ];
 
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var NoticeRepositoryInterface
+     */
+    private $noticeRepository;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setUp()
+    {
+        static::$kernel = static::createKernel();
+        static::$kernel->boot();
+        $this->entityManager = static::$kernel
+            ->getContainer()
+            ->get('doctrine.orm.default_entity_manager');
+
+        $this->noticeRepository = $this
+            ->entityManager
+            ->getRepository(Notice::class);
+    }
+
     public function testGetNotices()
     {
         $client = static::createClient();
         $client->request('GET', $this->url . 'api/notices/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testAddNotice()
@@ -46,6 +77,23 @@ class NoticeControllerTest extends WebTestCase
             json_encode($this->notice)
         );
 
-        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+    }
+
+    public function testGetOneNotice()
+    {
+        if ($notices = $this->noticeRepository->findAll())
+        {
+            $notice = $notices[0];
+            $client = static::createClient();
+
+            $client->request(
+                'DELETE',
+                $this->url . 'api/notices/' . $notice->getId()
+            );
+            dd($client->getResponse(), $this->url . 'api/notices/' . $notice->getId());
+            $notice->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        };
+
     }
 }
