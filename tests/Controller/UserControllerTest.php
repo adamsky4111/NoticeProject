@@ -124,4 +124,20 @@ class UserControllerTest extends WebTestCase
             throw new Exception('no users in database.');
         }
     }
+
+    public function testDelete()
+    {
+        if ($users = $this->userRepository->findAll()) {
+            $user = $users[0];
+            $client = static::createClient();
+
+            $client->request(
+                'DELETE',
+                $this->url . 'api/users/' . $user->getUsername()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('no users in database.');
+        }
+    }
 }
