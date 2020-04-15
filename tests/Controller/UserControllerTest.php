@@ -123,21 +123,6 @@ class UserControllerTest extends WebTestCase
         }
     }
 
-    public function testDelete()
-    {
-        if ($users = $this->userRepository->findAll()) {
-            $user = $users[0];
-            $client = static::createClient();
-
-            $client->request(
-                'DELETE',
-                $this->url . 'api/users/' . $user->getUsername()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('no users in database.');
-        }
-    }
 
     public function testGetAllUsers()
     {
@@ -157,12 +142,12 @@ class UserControllerTest extends WebTestCase
 
             $client->request(
                 'PUT',
-                $this->url . 'api/users/' . $user->getId(),
+                $this->url . 'api/users/change-password/' . $user->getUsername(),
                 [],
                 [],
                 ['CONTENT_TYPE' => 'application/json'],
                 json_encode([
-                    'password' => 'newPassword',
+                    'newPassword' => 'newPassword',
                 ])
             );
             $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -193,7 +178,7 @@ class UserControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request(
             'POST',
-            $this->url . 'api/forgot',
+            $this->url . 'api/users/forgot-password',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -202,5 +187,21 @@ class UserControllerTest extends WebTestCase
             ])
         );
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+    public function testDelete()
+    {
+        if ($users = $this->userRepository->findAll()) {
+            $user = $users[0];
+            $client = static::createClient();
+
+            $client->request(
+                'DELETE',
+                $this->url . 'api/users/' . $user->getUsername()
+            );
+            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        } else {
+            throw new Exception('no users in database.');
+        }
     }
 }

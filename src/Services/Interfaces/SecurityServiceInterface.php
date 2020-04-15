@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -12,4 +13,16 @@ interface SecurityServiceInterface
     public function saveUser($data);
 
     public function usernameExist($username): bool;
+
+    public function emailExist($email): bool;
+
+    public function getUserByUsername($username);
+
+    public function getUserById($id);
+
+    public function getUsers(): array;
+
+    public function deleteUser($username);
+
+    public function changePassword($id, $newPassword);
 }

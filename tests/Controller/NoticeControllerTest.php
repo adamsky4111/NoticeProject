@@ -50,13 +50,6 @@ class NoticeControllerTest extends WebTestCase
             ->getRepository(Notice::class);
     }
 
-    public function testGetNotices()
-    {
-        $client = static::createClient();
-        $client->request('GET', $this->url . 'api/notices/');
-        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-    }
-
     public function testAddNotice()
     {
         $client = static::createClient();
@@ -77,6 +70,13 @@ class NoticeControllerTest extends WebTestCase
             json_encode($this->notice)
         );
         $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+    }
+
+    public function testGetNotices()
+    {
+        $client = static::createClient();
+        $client->request('GET', $this->url . 'api/notices/');
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testPut()
