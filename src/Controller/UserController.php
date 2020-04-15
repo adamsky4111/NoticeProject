@@ -93,4 +93,28 @@ class UserController extends AbstractController
             return new JsonResponse(['status' => true, 'message' => 'Notice Deleted'], Response::HTTP_OK);
         } else return new JsonResponse(['status' => false, 'message' => 'delete failed'], Response::HTTP_NOT_ACCEPTABLE);
     }
+
+    /**
+     * @Route("/forgot-password/{username}", name="forgot_password", methods={"POST"})
+     * @return JsonResponse
+     */
+    public function forgotPassword()
+    {
+        return new JsonResponse('TODO');
+    }
+
+    /**
+     * @Route("/change-password/{username}", name="change_password", methods={"PUT"})
+     * @param Request $request
+     * @param $username
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request, $username)
+    {
+        $data = json_decode($request->getContent(), true);
+        if ($this->securityService->changePassword($username, $data['newPassword'])){
+            return new JsonResponse(['status' => true, 'message' => 'password changed'], Response::HTTP_OK);
+        }
+        else return new JsonResponse(['status' => false, 'message' => 'could not change password for this user.']);
+    }
 }

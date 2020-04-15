@@ -66,12 +66,12 @@ class SecurityService implements SecurityServiceInterface
         return true;
     }
 
-    public function changePassword($id, $newPassword)
+    public function changePassword($username, $newPassword)
     {
         /**
          * @var User $user
          */
-        $user = $this->getUserById($id);
+        $user = $this->getUserByUsername($username);
 
         ($user->setPassword($this->encoder->encodePassword($user, $newPassword)) ? $bool = true : $bool = false);
 
