@@ -44,11 +44,17 @@ class UserController extends AbstractController
         }
 
         if ($errors) {
-            return new JsonResponse(['status' => false, 'message' => $errors], Response::HTTP_NOT_ACCEPTABLE);
+            return new JsonResponse([
+                'status' => false,
+                'message' => $errors
+            ], Response::HTTP_NOT_ACCEPTABLE);
         } else {
             $this->securityService->saveUser($data);
 
-            return new JsonResponse(['status' => true, 'message' => 'User created'], Response::HTTP_CREATED);
+            return new JsonResponse([
+                'status' => true,
+                'message' => 'User created'
+            ], Response::HTTP_CREATED);
         }
     }
 
@@ -90,8 +96,14 @@ class UserController extends AbstractController
     public function delete($username): JsonResponse
     {
         if ($this->securityService->deleteUser($username)) {
-            return new JsonResponse(['status' => true, 'message' => 'Notice Deleted'], Response::HTTP_OK);
-        } else return new JsonResponse(['status' => false, 'message' => 'delete failed'], Response::HTTP_NOT_ACCEPTABLE);
+            return new JsonResponse([
+                'status' => true,
+                'message' => 'Notice Deleted'
+            ], Response::HTTP_OK);
+        } else return new JsonResponse([
+            'status' => false,
+            'message' => 'delete failed'
+        ], Response::HTTP_NOT_ACCEPTABLE);
     }
 
     /**
@@ -112,9 +124,14 @@ class UserController extends AbstractController
     public function changePassword(Request $request, $username)
     {
         $data = json_decode($request->getContent(), true);
-        if ($this->securityService->changePassword($username, $data['newPassword'])){
-            return new JsonResponse(['status' => true, 'message' => 'password changed'], Response::HTTP_OK);
-        }
-        else return new JsonResponse(['status' => false, 'message' => 'could not change password for this user.']);
+        if ($this->securityService->changePassword($username, $data['newPassword'])) {
+            return new JsonResponse([
+                'status' => true,
+                'message' => 'password changed'
+            ], Response::HTTP_OK);
+        } else return new JsonResponse([
+            'status' => false,
+            'message' => 'could not change password for this user.'
+        ]);
     }
 }
