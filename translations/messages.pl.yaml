@@ -1,0 +1,6 @@
+  Notice create success: Ogłoszenie zostało dodane, czeka na zaakceptowanie przez administratora.
+  Notice create failed: Nie udało się dodać ogłoszenia, problemy techniczne.
+  Notice update success: Ogłoszenie zostało zmienione, czeka na zaakceptowanie przez administratora.
+  Notice update failed: Nie udało się wysłać prośby o aktualizacje ogłoszenia.
+  Notice delete success: Ogłoszenie zostało usunięte.
+  Notice delete failed: Nie udało się usunąć ogłoszenia.

@@ -44,11 +44,11 @@ class NoticeService implements NoticeServiceInterface
     {
         if ($this->checkContent($data)) {
             if (!$notice = $this->getOneById($id))
-                throw new NotFoundHttpException('error, wrong notice index');
+                return false;
             $this->setValues($data, $notice);
             $this->noticeRepository->save($notice);
 
-            return $notice;
+            return true;
         }
         return false;
     }
@@ -87,7 +87,7 @@ class NoticeService implements NoticeServiceInterface
     public function deleteNotice($id)
     {
         if (!$notice = $this->getOneById($id)) {
-            throw new NotFoundHttpException('error, wrong notice index');
+            return false;
         };
         $this->noticeRepository->deleteNotice($notice);
 
