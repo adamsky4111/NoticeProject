@@ -1,6 +1,15 @@
-  Notice create success: Ogłoszenie zostało dodane, czeka na zaakceptowanie przez administratora.
-  Notice create failed: Nie udało się dodać ogłoszenia, problemy techniczne.
-  Notice update success: Ogłoszenie zostało zmienione, czeka na zaakceptowanie przez administratora.
-  Notice update failed: Nie udało się wysłać prośby o aktualizacje ogłoszenia.
-  Notice delete success: Ogłoszenie zostało usunięte.
-  Notice delete failed: Nie udało się usunąć ogłoszenia.
+Notice create success: 'Ogłoszenie zostało dodane!'
+Notice create failed: 'Nie udało się dodać ogłoszenia, problemy techniczne.'
+Notice update success: 'Ogłoszenie zostało zmienione.'
+Notice update failed: 'Nie udało się wysłać prośby o aktualizacje ogłoszenia.'
+Notice delete success: 'Ogłoszenie zostało usunięte.'
+Notice delete failed: 'Nie udało się usunąć ogłoszenia.'
+Username taken: 'Ta nazwa użytkownika jest już zajęta.'
+Email taken: 'Ten email jest już zajęty.'
+Username And Email taken: 'Nazwa użytkownika oraz email są zajęte.'
+User create success: 'Na wpisany email został wysłany link aktywacyjny.'
+User wrong index: 'Nie istnieje użytkownik o tej nazwie.'
+User delete success: 'Użytkownik został usunięty.'
+User delete failed: 'Odmowa usunięcia użytkownika.'
+User password change success: 'Hasło zostało zmienione.'
+User password change failed: 'Nieznany błąd podczas zmiany hasła.'

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/api/users")
@@ -19,9 +20,13 @@ class UserController extends AbstractController
      */
     private $securityService;
 
-    public function __construct(SecurityServiceInterface $securityService)
+    private $translator;
+
+    public function __construct(SecurityServiceInterface $securityService,
+                                TranslatorInterface $translator)
     {
         $this->securityService = $securityService;
+        $this->translator = $translator;
     }
 
     /**
@@ -36,25 +41,28 @@ class UserController extends AbstractController
         $errors = [];
 
         if ($this->securityService->usernameExist($data['username'])) {
-            $errors[] = 'username taken';
+            $errors[] = 'Username';
         }
 
         if ($this->securityService->emailExist($data['email'])) {
-            $errors[] = 'email taken';
+            $errors[] = 'Email';
         }
 
         if ($errors) {
-            return new JsonResponse([
-                'status' => false,
-                'message' => $errors
-            ], Response::HTTP_NOT_ACCEPTABLE);
+            $stringErrors = implode($errors, ' and '); // create "Username and Email taken" translation
+            $stringErrors .= ' taken';
+            return $this->createResponse(
+                false,
+                $stringErrors,
+                Response::HTTP_NOT_ACCEPTABLE
+            );
         } else {
             $this->securityService->saveUser($data);
 
-            return new JsonResponse([
-                'status' => true,
-                'message' => 'User created'
-            ], Response::HTTP_CREATED);
+            return $this->createResponse(
+                true,
+                'User create success',
+                Response::HTTP_CREATED);
         }
     }
 
@@ -83,9 +91,17 @@ class UserController extends AbstractController
     public function getOne($username): JsonResponse
     {
         $user = $this->securityService->getUserByUsername($username);
-        $data = $user->toArray();
 
-        return new JsonResponse($data, Response::HTTP_OK);
+        if ($user) {
+            $data = $user->toArray();
+            return new JsonResponse($data, Response::HTTP_OK);
+        } else {
+            return $this->createResponse(
+                false,
+                'User wrong username',
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 
     /**
@@ -95,15 +111,19 @@ class UserController extends AbstractController
      */
     public function delete($username): JsonResponse
     {
-        if ($this->securityService->deleteUser($username)) {
-            return new JsonResponse([
-                'status' => true,
-                'message' => 'Notice Deleted'
-            ], Response::HTTP_OK);
-        } else return new JsonResponse([
-            'status' => false,
-            'message' => 'delete failed'
-        ], Response::HTTP_NOT_ACCEPTABLE);
+        $isOK = $this->securityService->deleteUser($username);
+
+        if ($isOK) {
+            return $this->createResponse(
+                true,
+                'User delete success'
+                , Response::HTTP_OK);
+        } else {
+            return $this->createResponse(
+                false,
+                'User delete failed',
+                Response::HTTP_NOT_ACCEPTABLE);
+        }
     }
 
     /**
@@ -124,14 +144,28 @@ class UserController extends AbstractController
     public function changePassword(Request $request, $username)
     {
         $data = json_decode($request->getContent(), true);
-        if ($this->securityService->changePassword($username, $data['newPassword'])) {
-            return new JsonResponse([
-                'status' => true,
-                'message' => 'password changed'
-            ], Response::HTTP_OK);
-        } else return new JsonResponse([
-            'status' => false,
-            'message' => 'could not change password for this user.'
-        ]);
+
+        $isOK = $this->securityService->changePassword($username, $data['newPassword']);
+        if ($isOK) {
+            return $this->createResponse(
+                true,
+                'User password change success',
+                Response::HTTP_OK);
+        } else {
+            return $this->createResponse(
+                false,
+                'User password change failed',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
+    }
+
+    public function createResponse($status, $message, $code)
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $this->translator->trans($message)
+        ], $code
+        );
     }
 }
