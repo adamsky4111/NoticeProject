@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Services\Interfaces\AccountActivationInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,24 +29,34 @@ class AccountActivation implements AccountActivationInterface
         $this->activationAccountEmail = $activationAccountEmail;
     }
 
-    public function sendAccountActivationUrl($addressEmail, $userId, $activationCode)
+    public function sendAccountActivationUrl($addressEmail,
+                                             $userId,
+                                             $activationCode,
+                                             $username)
     {
         $link =
             $this->urlGenerator->generate(
-                'activate',
+                'activate_user',
                 [
                     'code' => $activationCode,
                     'user' => $userId
                 ],
                 UrlGenerator::ABSOLUTE_URL
             );
+        $context = [
+            'link' => $link,
+            'username' => $username,
+        ];
 
-        $this->emailService->sendEmail([
-            'from' => $this->activationAccountEmail,
-            'to' => $addressEmail,
-            'subject' => 'Activate your account on Test platform',
-            'htmlBody' => 'press the link to activate account: ' . $link,
-        ]);
+        $subject = $this->translator->trans('User activation email subject');
+        $activationEmail = (new TemplatedEmail())
+            ->from($this->activationAccountEmail)
+            ->to($addressEmail)
+            ->subject($subject)
+            ->htmlTemplate('email/activation.html.twig')
+            ->context($context);
+
+        $this->emailService->sendEmail($activationEmail);
 
         return true;
     }

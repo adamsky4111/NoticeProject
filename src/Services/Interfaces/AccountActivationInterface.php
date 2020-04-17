@@ -13,7 +13,10 @@ interface AccountActivationInterface
                                 TranslatorInterface $translator,
                                 string $activationAccountEmail);
 
-    public function sendAccountActivationUrl($addressEmail, $userId, $activationCode);
+    public function sendAccountActivationUrl($addressEmail,
+                                             $userId,
+                                             $activationCode,
+                                             $username);
 
     public function createUniqueKey();
 }
