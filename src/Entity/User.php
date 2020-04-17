@@ -33,6 +33,11 @@ class User implements UserInterface
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=180)
+     */
+    private $activationCode;
+
+    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -68,6 +73,17 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+    public function getActivationCode(): ?string
+    {
+        return $this->activationCode;
+    }
+
+    public function setActivationCode(string $activationCode): self
+    {
+        $this->activationCode = $activationCode;
 
         return $this;
     }
