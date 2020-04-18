@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Services\Interfaces\SecurityServiceInterface;
+use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,52 +19,15 @@ class UserController extends AbstractController
     /**
      * @var SecurityServiceInterface
      */
-    private $securityService;
+    private $userService;
 
     private $translator;
 
-    public function __construct(SecurityServiceInterface $securityService,
+    public function __construct(UserServiceInterface $userService,
                                 TranslatorInterface $translator)
     {
-        $this->securityService = $securityService;
+        $this->userService = $userService;
         $this->translator = $translator;
-    }
-
-    /**
-     * @Route("/new", name="new_user", methods={"POST"})
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function register(Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $errors = [];
-
-        if ($this->securityService->usernameExist($data['username'])) {
-            $errors[] = 'Username';
-        }
-
-        if ($this->securityService->emailExist($data['email'])) {
-            $errors[] = 'Email';
-        }
-
-        if ($errors) {
-            $stringErrors = implode($errors, ' and '); // create "Username and Email taken" translation
-            $stringErrors .= ' taken';
-            return $this->createResponse(
-                false,
-                $stringErrors,
-                Response::HTTP_NOT_ACCEPTABLE
-            );
-        } else {
-            $this->securityService->saveUser($data);
-
-            return $this->createResponse(
-                true,
-                'User create success',
-                Response::HTTP_CREATED);
-        }
     }
 
     /**
@@ -73,7 +37,7 @@ class UserController extends AbstractController
      */
     public function getAll(Request $request)
     {
-        $users = $this->securityService->getUsers();
+        $users = $this->userService->getUsers();
         $data = [];
 
         foreach ($users as $user) {
@@ -90,7 +54,7 @@ class UserController extends AbstractController
      */
     public function getOne($username): JsonResponse
     {
-        $user = $this->securityService->getUserByUsername($username);
+        $user = $this->userService->getUserByUsername($username);
 
         if ($user) {
             $data = $user->toArray();
@@ -111,7 +75,7 @@ class UserController extends AbstractController
      */
     public function delete($username): JsonResponse
     {
-        $isOK = $this->securityService->deleteUser($username);
+        $isOK = $this->userService->deleteUser($username);
 
         if ($isOK) {
             return $this->createResponse(
@@ -123,40 +87,6 @@ class UserController extends AbstractController
                 false,
                 'User delete failed',
                 Response::HTTP_NOT_ACCEPTABLE);
-        }
-    }
-
-    /**
-     * @Route("/forgot-password/{username}", name="forgot_password", methods={"POST"})
-     * @return JsonResponse
-     */
-    public function forgotPassword()
-    {
-        return new JsonResponse('TODO');
-    }
-
-    /**
-     * @Route("/change-password/{username}", name="change_password", methods={"PUT"})
-     * @param Request $request
-     * @param $username
-     * @return JsonResponse
-     */
-    public function changePassword(Request $request, $username)
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $isOK = $this->securityService->changePassword($username, $data['newPassword']);
-        if ($isOK) {
-            return $this->createResponse(
-                true,
-                'User password change success',
-                Response::HTTP_OK);
-        } else {
-            return $this->createResponse(
-                false,
-                'User password change failed',
-                Response::HTTP_NOT_ACCEPTABLE
-            );
         }
     }
 
