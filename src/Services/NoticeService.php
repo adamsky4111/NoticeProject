@@ -6,14 +6,14 @@ use App\Entity\Notice;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
 use App\Services\Interfaces\NoticeServiceInterface;
 use App\Services\Interfaces\UploadFilesServiceInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NoticeService implements NoticeServiceInterface
 {
     private $noticeRepository;
     private $uploadFilesService;
 
-    public function __construct(UploadFilesServiceInterface $uploadFilesService, NoticeRepositoryInterface $noticeRepository)
+    public function __construct(UploadFilesServiceInterface $uploadFilesService,
+                                NoticeRepositoryInterface $noticeRepository)
     {
         $this->noticeRepository = $noticeRepository;
         $this->uploadFilesService = $uploadFilesService;
