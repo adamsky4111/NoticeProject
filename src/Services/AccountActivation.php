@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Services\Interfaces\AccountActivationInterface;
+use App\Services\Interfaces\EmailServiceInterface;
+use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,12 +19,16 @@ class AccountActivation implements AccountActivationInterface
 
     private $activationAccountEmail;
 
-    public function __construct(EmailService $emailService,
+    private $userService;
+
+    public function __construct(EmailServiceInterface $emailService,
+                                UserServiceInterface $userService,
                                 UrlGeneratorInterface $urlGenerator,
                                 TranslatorInterface $translator,
                                 string $activationAccountEmail)
     {
         $this->emailService = $emailService;
+        $this->userService = $userService;
         $this->urlGenerator = $urlGenerator;
         $this->translator = $translator;
         $this->activationAccountEmail = $activationAccountEmail;
@@ -41,7 +46,7 @@ class AccountActivation implements AccountActivationInterface
                     'code' => $activationCode,
                     'user' => $userId
                 ],
-                UrlGenerator::ABSOLUTE_URL
+                UrlGeneratorInterface::ABSOLUTE_URL
             );
         $context = [
             'link' => $link,
@@ -64,5 +69,16 @@ class AccountActivation implements AccountActivationInterface
     public function createUniqueKey(): string
     {
         return md5(uniqid());
+    }
+
+    public function codeIsValid($activationCode, $userId)
+    {
+        $user = $this->userService->getUserById($userId);
+        $userCode = $user->getActivationCode();
+        if ($userCode === $activationCode) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Services\Interfaces;
 
-use App\Services\EmailService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 interface AccountActivationInterface
 {
-    public function __construct(EmailService $emailService,
+    public function __construct(EmailServiceInterface $emailService,
+                                UserServiceInterface $userService,
                                 UrlGeneratorInterface $urlGenerator,
                                 TranslatorInterface $translator,
                                 string $activationAccountEmail);
@@ -19,4 +19,7 @@ interface AccountActivationInterface
                                              $username);
 
     public function createUniqueKey();
+
+    public function codeIsValid($activationCode,
+                                $userId);
 }
