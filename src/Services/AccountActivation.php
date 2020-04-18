@@ -71,11 +71,12 @@ class AccountActivation implements AccountActivationInterface
         return md5(uniqid());
     }
 
-    public function codeIsValid($activationCode, $userId)
+    public function activateUser($activationCode, $userId)
     {
         $user = $this->userService->getUserById($userId);
         $userCode = $user->getActivationCode();
         if ($userCode === $activationCode) {
+            $user->setActive(true);
             return true;
         }
 

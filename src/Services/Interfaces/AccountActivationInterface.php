@@ -20,6 +20,6 @@ interface AccountActivationInterface
 
     public function createUniqueKey();
 
-    public function codeIsValid($activationCode,
+    public function activateUser($activationCode,
                                 $userId);
 }
