@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\Interfaces\AccountActivationInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,9 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/api/security")
- */
 class SecurityController extends AbstractController
 {
     /**
@@ -30,7 +28,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/register", name="register_user", methods={"POST"})
+     * @Route("/api/security/register", name="register_user", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -49,7 +47,10 @@ class SecurityController extends AbstractController
         }
 
         if ($errors) {
-            $stringErrors = implode($errors, ' and '); // create "Username and Email taken" translation
+            $stringErrors = implode(
+                $errors,
+                ' and '
+            ); // create "Username and Email taken" translation
             $stringErrors .= ' taken';
 
             return $this->createResponse(
@@ -70,12 +71,38 @@ class SecurityController extends AbstractController
     /**
      * @Route("/activate", name="activate_user", methods={"GET"})
      * @param Request $request
+     * @param AccountActivationInterface $accountActivation
      */
-    public function activate(Request $request)
+    public function activate(Request $request,
+                             AccountActivationInterface $accountActivation)
     {
         $userId = $request->query->get('user');
         $activationCode = $request->query->get('code');
-        $user = $this->securityService->getUserById($userId);
+        if ($userId && $activationCode) {
+            return $this->createResponse(
+                false,
+                'User wrong activation code',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
+        $isActivated = $accountActivation->activateUser(
+            $activationCode,
+            $userId
+        );
+
+        if ($isActivated) {
+            return $this->createResponse(
+                true,
+                'User is activated',
+                Response::HTTP_OK
+            );
+        } else {
+            return $this->createResponse(
+                false,
+                'User wrong activation code',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
     }
 
     /**
@@ -97,7 +124,11 @@ class SecurityController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $isOK = $this->securityService->changePassword($username, $data['newPassword']);
+        $isOK = $this->securityService->changePassword(
+            $username,
+            $data['newPassword']
+        );
+
         if ($isOK) {
             return $this->createResponse(
                 true,
