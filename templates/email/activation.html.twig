@@ -1,0 +1,15 @@
+{% extends "email/baseEmail.html.twig" %}
+
+{% block content %}
+    <h1 class="text-center">Witaj {{ username }}!</h1>
+    <p class="block">
+        Witaj w <strong>Test Corp</strong>, aby aktywować swoje konto kliknij w link aktywacyjny:
+
+    </p>
+    <p class="block text-center">
+        <a href="{{ link }}" class="btn">Aktywuj konto</a>
+    </p>
+    <p class="block">
+        Jest to testowa platforma
+    </p>
+{% endblock %}

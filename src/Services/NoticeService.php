@@ -6,14 +6,15 @@ use App\Entity\Notice;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
 use App\Services\Interfaces\NoticeServiceInterface;
 use App\Services\Interfaces\UploadFilesServiceInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NoticeService implements NoticeServiceInterface
 {
     private $noticeRepository;
+
     private $uploadFilesService;
 
-    public function __construct(UploadFilesServiceInterface $uploadFilesService, NoticeRepositoryInterface $noticeRepository)
+    public function __construct(UploadFilesServiceInterface $uploadFilesService,
+                                NoticeRepositoryInterface $noticeRepository)
     {
         $this->noticeRepository = $noticeRepository;
         $this->uploadFilesService = $uploadFilesService;
@@ -40,15 +41,15 @@ class NoticeService implements NoticeServiceInterface
         return false;
     }
 
-    public function updateNotice($id, $data)
+    public function updateNotice($id, $data): bool
     {
         if ($this->checkContent($data)) {
             if (!$notice = $this->getOneById($id))
-                throw new NotFoundHttpException('error, wrong notice index');
+                return false;
             $this->setValues($data, $notice);
             $this->noticeRepository->save($notice);
 
-            return $notice;
+            return true;
         }
         return false;
     }
@@ -87,7 +88,7 @@ class NoticeService implements NoticeServiceInterface
     public function deleteNotice($id)
     {
         if (!$notice = $this->getOneById($id)) {
-            throw new NotFoundHttpException('error, wrong notice index');
+            return false;
         };
         $this->noticeRepository->deleteNotice($notice);
 

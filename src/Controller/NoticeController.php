@@ -7,15 +7,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NoticeController
 {
 
     private $noticeService;
 
-    public function __construct(NoticeServiceInterface $noticeService)
+    private $translator;
+
+    public function __construct(NoticeServiceInterface $noticeService,
+                                TranslatorInterface $translator)
     {
         $this->noticeService = $noticeService;
+        $this->translator = $translator;
     }
 
     /**
@@ -26,11 +31,23 @@ class NoticeController
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $isOK = ($this->noticeService->saveNotice($data, $request->files, '../public/uploads/img'));
+        $isOK = $this->noticeService->saveNotice(
+            $data,
+            $request->files,
+            '../public/uploads/img'
+        );
         if ($isOK) {
-            return new JsonResponse(['status' => true, 'message' => 'Notice created'], Response::HTTP_CREATED);
+            return $this->createResponse(
+                true,
+                'Notice created',
+                Response::HTTP_CREATED
+            );
         } else {
-            return new JsonResponse(['status' => false, 'message' => 'create failed'], Response::HTTP_NOT_ACCEPTABLE);
+            return $this->createResponse(
+                false,
+                'Notice create failed',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
         }
     }
 
@@ -71,10 +88,20 @@ class NoticeController
     public function update($id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $notice = $this->noticeService->updateNotice($id, $data);
-        if ($notice) {
-            return new JsonResponse(['status' => true, 'message' => 'Notice Updated'], Response::HTTP_OK);
-        } else return new JsonResponse(['status' => false, 'message' => 'update failed'], Response::HTTP_NOT_ACCEPTABLE);
+        $isOK = $this->noticeService->updateNotice($id, $data);
+        if ($isOK) {
+            return $this->createResponse(
+                true,
+                'Notice updated',
+                Response::HTTP_OK
+            );
+        } else {
+            return $this->createResponse(
+                false,
+                'Notice update failed',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
     }
 
     /**
@@ -84,9 +111,29 @@ class NoticeController
      */
     public function delete($id): JsonResponse
     {
-        if ($this->noticeService->deleteNotice($id)) {
-            return new JsonResponse(['status' => true, 'message' => 'Notice Deleted'], Response::HTTP_OK);
-        } else return new JsonResponse(['status' => false, 'message' => 'delete failed'], Response::HTTP_NOT_ACCEPTABLE);
+        $isOK = $this->noticeService->deleteNotice($id);
+        if ($isOK) {
+            return $this->createResponse(
+                true,
+                'Notice deleted',
+                Response::HTTP_OK
+            );
+        } else {
+            return $this->createResponse(
+                false,
+                'Notice delete failed',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
+    }
+
+    public function createResponse($status, $message, $code)
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $this->translator->trans($message)
+        ], $code
+        );
     }
 
 }

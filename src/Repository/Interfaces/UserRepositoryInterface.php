@@ -14,6 +14,8 @@ interface UserRepositoryInterface
 
     public function findUserByUsername($username);
 
+    public function findUserByEmail($email);
+
     public function findUserById($id);
 
     public function findUsers(): array;
