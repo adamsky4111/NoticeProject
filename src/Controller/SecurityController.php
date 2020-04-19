@@ -106,12 +106,30 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/forgot-password/{username}", name="forgot_password", methods={"POST"})
+     * @Route("/api/security/forgot-password", name="forgot_password", methods={"POST"})
+     * @param Request $request
      * @return JsonResponse
      */
-    public function forgotPassword()
+    public function forgotPassword(Request $request)
     {
-        return new JsonResponse('TODO');
+        $data = json_decode($request->getContent(), true);
+        $addressEmail = $data['email'];
+
+        $isOK = $this->securityService->resetPassword($addressEmail);
+
+        if ($isOK) {
+            return $this->createResponse(
+                true,
+                'Reset password success',
+                Response::HTTP_OK
+            );
+        } else {
+            return $this->createResponse(
+                false,
+                'Reset password failed',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
     }
 
     /**

@@ -18,4 +18,8 @@ interface SecurityServiceInterface
     public function usernameExist($username): bool;
 
     public function emailExist($email): bool;
+
+    public function changePassword($username, $newPassword): bool;
+
+    public function resetPassword($email): bool;
 }

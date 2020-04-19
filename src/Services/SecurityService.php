@@ -68,7 +68,7 @@ class SecurityService implements SecurityServiceInterface
         return $this->repository->checkifEmailExist($email);
     }
 
-    public function changePassword($username, $newPassword)
+    public function changePassword($username, $newPassword): bool
     {
         /**
          * @var User $user
@@ -80,7 +80,7 @@ class SecurityService implements SecurityServiceInterface
         return $bool;
     }
 
-    public function resetPassword($email)
+    public function resetPassword($email): bool
     {
         $user = $this->userService->getUserByEmail($email);
 
