@@ -1,88 +1,15 @@
+{% extends "email/baseEmail.html.twig" %}
 
-<!doctype html>
-<html lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Witaj w Test Corp</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f3f3f3;
-            font-family: Helvetica, Arial, sans-serif;
-        }
-        h1 {
-            background-color: #264459;
-            color: #ffffff;
-            padding: 30px 0 50px 0;
-            font-weight: normal;
-        }
-        hr {
-            border: none;
-            border-top: 3px solid #264459;
-            margin: 20px;
-        }
-        .container {
-            background-color: #fefefe;
-            width: 580px;
-            margin: 0 auto;
-        }
-        .bottom {
-            background-color: #efefee;
-        }
-        .block {
-            margin: 0;
-            padding: 10px 20px 20px 20px;
-        }
-        .logo {
-            width: 100%;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #264459;
-            color: #fefefe;
-            border: 1px solid #fff;
-            border-radius: 3px;
-            font-size: 20px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-<div class="body">
-    <div class="container">
-        <div class="header text-center">
+{% block content %}
+    <h1 class="text-center">Witaj {{ username }}!</h1>
+    <p class="block">
+        Witaj w <strong>Test Corp</strong>, aby aktywować swoje konto kliknij w link aktywacyjny:
 
-        </div>
-        <div class="content">
-            <h1 class="text-center">Witaj {{ username }}!</h1>
-            <p class="block">
-                Witaj w <strong>Test Corp</strong>, aby aktywować swoje konto kliknij w link aktywacyjny:
-
-            </p>
-            <p class="block text-center">
-                <a href="{{ link }}" class="btn">Aktywuj konto</a>
-            </p>
-            <p class="block">
-                Jest to testowa platforma
-            </p>
-        </div>
-        <div class="footer">
-            <p class="block">
-                Pozdrowienia,<br><br>
-                od <em>Test Platform!</em>
-            </p>
-            <p class="block bottom text-center">
-                wysłano z Test Platform.
-            </p>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+    </p>
+    <p class="block text-center">
+        <a href="{{ link }}" class="btn">Aktywuj konto</a>
+    </p>
+    <p class="block">
+        Jest to testowa platforma
+    </p>
+{% endblock %}
