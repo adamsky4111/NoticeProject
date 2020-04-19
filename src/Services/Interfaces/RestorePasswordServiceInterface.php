@@ -9,8 +9,6 @@ interface RestorePasswordServiceInterface
     public function __construct(EmailServiceInterface $emailService,
                                 TranslatorInterface $translator,
                                 string $restoreEmail);
-    
-    public function sendNewPassword($addressEmail, $username);
 
-    public function generateTemporaryPassword();
+    public function sendNewPassword($addressEmail, $username);
 }
