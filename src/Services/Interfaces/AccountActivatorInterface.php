@@ -5,7 +5,7 @@ namespace App\Services\Interfaces;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-interface AccountActivationInterface
+interface AccountActivatorInterface
 {
     public function __construct(EmailServiceInterface $emailService,
                                 UserServiceInterface $userService,

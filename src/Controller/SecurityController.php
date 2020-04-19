@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Services\Interfaces\AccountActivationInterface;
+use App\Services\Interfaces\AccountActivatorInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,10 +71,10 @@ class SecurityController extends AbstractController
     /**
      * @Route("/activate", name="activate_user", methods={"GET"})
      * @param Request $request
-     * @param AccountActivationInterface $accountActivation
+     * @param AccountActivatorInterface $accountActivation
      */
     public function activate(Request $request,
-                             AccountActivationInterface $accountActivation)
+                             AccountActivatorInterface $accountActivation)
     {
         $userId = $request->query->get('user');
         $activationCode = $request->query->get('code');

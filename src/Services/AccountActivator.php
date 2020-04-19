@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Services\Interfaces\AccountActivationInterface;
+use App\Services\Interfaces\AccountActivatorInterface;
 use App\Services\Interfaces\EmailServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AccountActivation implements AccountActivationInterface
+class AccountActivator implements AccountActivatorInterface
 {
     private $urlGenerator;
 

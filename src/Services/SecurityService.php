@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
-use App\Services\Interfaces\AccountActivationInterface;
+use App\Services\Interfaces\AccountActivatorInterface;
 use App\Services\Interfaces\RestorePasswordServiceInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
@@ -16,7 +16,7 @@ class SecurityService implements SecurityServiceInterface
 
     private $encoder;
 
-    private $accountActivation;
+    private $accountActivator;
 
     private $userService;
 
@@ -24,20 +24,20 @@ class SecurityService implements SecurityServiceInterface
 
     public function __construct(UserRepositoryInterface $repository,
                                 UserPasswordEncoderInterface $encoder,
-                                AccountActivationInterface $accountActivation,
+                                AccountActivatorInterface $accountActivator,
                                 UserServiceInterface $userService,
                                 RestorePasswordServiceInterface $restorePasswordService)
     {
         $this->repository = $repository;
         $this->encoder = $encoder;
-        $this->accountActivation = $accountActivation;
+        $this->accountActivator = $accountActivator;
         $this->userService = $userService;
         $this->restorePasswordService = $restorePasswordService;
     }
 
     public function saveUser($data)
     {
-        $activationCode = $this->accountActivation->createUniqueKey();
+        $activationCode = $this->accountActivator->createUniqueKey();
 
         $user = new User();
         $user->setEmail($data['email']);
@@ -48,7 +48,7 @@ class SecurityService implements SecurityServiceInterface
         $this->repository->save($user);
         $userId = $user->getId();
 
-        $this->accountActivation->sendAccountActivationUrl(
+        $this->accountActivator->sendAccountActivationUrl(
             $data['email'],
             $userId,
             $activationCode,

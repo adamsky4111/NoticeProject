@@ -38,6 +38,11 @@ class User implements UserInterface
     private $activationCode;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $confirmationToken;
+
+    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -84,6 +89,18 @@ class User implements UserInterface
     public function setActivationCode(string $activationCode): self
     {
         $this->activationCode = $activationCode;
+
+        return $this;
+    }
+
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken(string $confirmationToken): self
+    {
+        $this->confirmationToken = $confirmationToken;
 
         return $this;
     }

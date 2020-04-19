@@ -9,7 +9,7 @@ interface SecurityServiceInterface
 {
     public function __construct(UserRepositoryInterface $repository,
                                 UserPasswordEncoderInterface $encoder,
-                                AccountActivationInterface $accountActivation,
+                                AccountActivatorInterface $accountActivator,
                                 UserServiceInterface $userService,
                                 RestorePasswordServiceInterface $restorePasswordService);
 
