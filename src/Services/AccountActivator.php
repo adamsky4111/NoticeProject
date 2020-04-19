@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Entity\User;
 use App\Services\Interfaces\AccountActivatorInterface;
 use App\Services\Interfaces\EmailServiceInterface;
-use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,25 +19,19 @@ class AccountActivator implements AccountActivatorInterface
 
     private $activationAccountEmail;
 
-    private $userService;
 
     public function __construct(EmailServiceInterface $emailService,
-                                UserServiceInterface $userService,
                                 UrlGeneratorInterface $urlGenerator,
                                 TranslatorInterface $translator,
                                 string $activationAccountEmail)
     {
         $this->emailService = $emailService;
-        $this->userService = $userService;
         $this->urlGenerator = $urlGenerator;
         $this->translator = $translator;
         $this->activationAccountEmail = $activationAccountEmail;
     }
 
-    public function sendAccountActivationUrl($addressEmail,
-                                             $userId,
-                                             $activationCode,
-                                             $username)
+    public function sendAccountActivationUrl($addressEmail, $userId, $activationCode, $username)
     {
         $link =
             $this->urlGenerator->generate(
@@ -54,6 +48,7 @@ class AccountActivator implements AccountActivatorInterface
         ];
 
         $subject = $this->translator->trans('User activation email subject');
+
         $activationEmail = (new TemplatedEmail())
             ->from($this->activationAccountEmail)
             ->to($addressEmail)
@@ -71,12 +66,11 @@ class AccountActivator implements AccountActivatorInterface
         return md5(uniqid());
     }
 
-    public function activateUser($activationCode, $userId)
+
+    public function isCodeValid($activationCode, User $user): bool
     {
-        $user = $this->userService->getUserById($userId);
         $userCode = $user->getActivationCode();
         if ($userCode === $activationCode) {
-            $user->setActive(true);
             return true;
         }
 

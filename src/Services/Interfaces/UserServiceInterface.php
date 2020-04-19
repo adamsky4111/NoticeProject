@@ -3,6 +3,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 
 interface UserServiceInterface
@@ -18,4 +19,6 @@ interface UserServiceInterface
     public function getUsers(): array;
 
     public function deleteUser($username);
+
+    public function saveUser(User $user);
 }

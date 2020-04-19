@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,5 +44,10 @@ class UserService implements UserServiceInterface
         $this->repository->delete($user);
 
         return true;
+    }
+
+    public function saveUser(User $user)
+    {
+        $this->repository->save($user);
     }
 }

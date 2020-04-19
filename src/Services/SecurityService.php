@@ -45,7 +45,7 @@ class SecurityService implements SecurityServiceInterface
         $user->setPassword($this->encoder->encodePassword($user, $data['password']));
         $user->setIsActive(false);
         $user->setActivationCode($activationCode);
-        $this->repository->save($user);
+        $this->userService->saveUser($user);
         $userId = $user->getId();
 
         $this->accountActivator->sendAccountActivationUrl(
@@ -95,6 +95,24 @@ class SecurityService implements SecurityServiceInterface
         $this->changePassword($username, $newPassword);
 
         return true;
+    }
+
+    public function activateUser($activationCode, $userId)
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->userService->getUserById($userId);
+
+        $isValid = $this->accountActivator->isCodeValid($activationCode, $user);
+
+        if ($isValid !== false) {
+            $user->setIsActive(true);
+            $this->userService->saveUser($user);
+            return true;
+        }
+
+        return false;
     }
 }
 

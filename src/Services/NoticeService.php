@@ -10,6 +10,7 @@ use App\Services\Interfaces\UploadFilesServiceInterface;
 class NoticeService implements NoticeServiceInterface
 {
     private $noticeRepository;
+
     private $uploadFilesService;
 
     public function __construct(UploadFilesServiceInterface $uploadFilesService,
@@ -40,7 +41,7 @@ class NoticeService implements NoticeServiceInterface
         return false;
     }
 
-    public function updateNotice($id, $data)
+    public function updateNotice($id, $data): bool
     {
         if ($this->checkContent($data)) {
             if (!$notice = $this->getOneById($id))

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Entity\User;
 use App\Services\Interfaces\EmailServiceInterface;
 use App\Services\Interfaces\RestorePasswordServiceInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -29,19 +28,20 @@ class RestorePasswordService implements RestorePasswordServiceInterface
     {
         $temporaryPassword = $this->generateTemporaryPassword();
         $subject = $this->translator->trans('User restore password email subject');
-        $context[] = [
+
+        $context = [
             'temporaryPassword' => $temporaryPassword,
             'username' => $username,
         ];
 
-        $activationEmail = (new TemplatedEmail())
+        $restoreEmail = (new TemplatedEmail())
             ->from($this->restoreEmail)
             ->to($addressEmail)
             ->subject($subject)
             ->htmlTemplate('email/restorePassword.html.twig')
             ->context($context);
 
-        $this->emailService->sendEmail($activationEmail);
+        $this->emailService->sendEmail($restoreEmail);
 
         return $temporaryPassword;
     }

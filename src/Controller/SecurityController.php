@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Services\Interfaces\AccountActivatorInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,21 +70,21 @@ class SecurityController extends AbstractController
     /**
      * @Route("/activate", name="activate_user", methods={"GET"})
      * @param Request $request
-     * @param AccountActivatorInterface $accountActivation
+     * @return JsonResponse
      */
-    public function activate(Request $request,
-                             AccountActivatorInterface $accountActivation)
+    public function activate(Request $request)
     {
         $userId = $request->query->get('user');
         $activationCode = $request->query->get('code');
-        if ($userId && $activationCode) {
+        if ($userId === null || $activationCode === null) {
+
             return $this->createResponse(
                 false,
                 'User wrong activation code',
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
-        $isActivated = $accountActivation->activateUser(
+        $isActivated = $this->securityService->activateUser(
             $activationCode,
             $userId
         );
