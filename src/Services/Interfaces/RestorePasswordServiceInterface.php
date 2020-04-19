@@ -10,5 +10,5 @@ interface RestorePasswordServiceInterface
                                 TranslatorInterface $translator,
                                 string $restoreEmail);
 
-    public function sendNewPassword($addressEmail, $username);
+    public function sendAndGenerateNewPassword($addressEmail, $username);
 }

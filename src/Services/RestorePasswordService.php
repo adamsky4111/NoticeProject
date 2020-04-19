@@ -25,7 +25,7 @@ class RestorePasswordService implements RestorePasswordServiceInterface
         $this->restoreEmail = $restoreEmail;
     }
 
-    public function sendNewPassword($addressEmail, $username)
+    public function sendAndGenerateNewPassword($addressEmail, $username)
     {
         $temporaryPassword = $this->generateTemporaryPassword();
         $subject = $this->translator->trans('User restore password email subject');
@@ -43,7 +43,7 @@ class RestorePasswordService implements RestorePasswordServiceInterface
 
         $this->emailService->sendEmail($activationEmail);
 
-        return true;
+        return $temporaryPassword;
     }
 
     public function generateTemporaryPassword()

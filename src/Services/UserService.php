@@ -20,6 +20,11 @@ class UserService implements UserServiceInterface
         return $this->repository->findUserByUsername($username);
     }
 
+    public function getUserByEmail($email)
+    {
+        return $this->repository->findUserByEmail($email);
+    }
+
     public function getUserById($id)
     {
         return $this->repository->findUserById($id);

@@ -80,12 +80,21 @@ class SecurityService implements SecurityServiceInterface
         return $bool;
     }
 
-    public function forgotPassword($username)
+    public function resetPassword($email)
     {
-        $user = $this->userService->getUserByUsername($username);
-        $addressEmail = $user->getEmail();
+        $user = $this->userService->getUserByEmail($email);
 
-        $this->restorePasswordService->sendNewPassword($addressEmail, $username);
+        if ($user === null) {
+            return false;
+        }
+
+        $addressEmail = $user->getEmail();
+        $username = $user->getUsername();
+        $newPassword = $this->restorePasswordService->sendAndGenerateNewPassword($addressEmail, $username);
+
+        $this->changePassword($username, $newPassword);
+
+        return true;
     }
 }
 

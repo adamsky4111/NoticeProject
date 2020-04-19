@@ -11,6 +11,8 @@ interface UserServiceInterface
 
     public function getUserByUsername($username);
 
+    public function getUserByEmail($email);
+
     public function getUserById($id);
 
     public function getUsers(): array;
