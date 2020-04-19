@@ -154,7 +154,7 @@ class SecurityControllerTest extends WebTestCase
             $client = static::createClient();
             $client->request(
                 'POST',
-                $this->url . $this->route . 'forgot-password' . $user->getUsername(),
+                $this->url . $this->route . 'forgot-password',
             [],
                 [],
                 ['CONTENT_TYPE' => 'application/json'],
