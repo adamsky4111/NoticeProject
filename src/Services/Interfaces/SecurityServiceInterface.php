@@ -10,7 +10,8 @@ interface SecurityServiceInterface
     public function __construct(UserRepositoryInterface $repository,
                                 UserPasswordEncoderInterface $encoder,
                                 AccountActivationInterface $accountActivation,
-                                UserServiceInterface $userService);
+                                UserServiceInterface $userService,
+                                RestorePasswordServiceInterface $restorePasswordService);
 
     public function saveUser($data);
 

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Services\Interfaces\AccountActivationInterface;
+use App\Services\Interfaces\RestorePasswordServiceInterface;
 use App\Services\Interfaces\SecurityServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -12,19 +13,26 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class SecurityService implements SecurityServiceInterface
 {
     private $repository;
+
     private $encoder;
+
     private $accountActivation;
+
     private $userService;
+
+    private $restorePasswordService;
 
     public function __construct(UserRepositoryInterface $repository,
                                 UserPasswordEncoderInterface $encoder,
                                 AccountActivationInterface $accountActivation,
-                                UserServiceInterface $userService)
+                                UserServiceInterface $userService,
+                                RestorePasswordServiceInterface $restorePasswordService)
     {
         $this->repository = $repository;
         $this->encoder = $encoder;
         $this->accountActivation = $accountActivation;
         $this->userService = $userService;
+        $this->restorePasswordService = $restorePasswordService;
     }
 
     public function saveUser($data)
@@ -70,6 +78,14 @@ class SecurityService implements SecurityServiceInterface
         ($user->setPassword($this->encoder->encodePassword($user, $newPassword)) ? $bool = true : $bool = false);
 
         return $bool;
+    }
+
+    public function forgotPassword($username)
+    {
+        $user = $this->userService->getUserByUsername($username);
+        $addressEmail = $user->getEmail();
+
+        $this->restorePasswordService->sendNewPassword($addressEmail, $username);
     }
 }
 
