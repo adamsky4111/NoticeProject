@@ -33,12 +33,12 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=180)
+     * @ORM\Column(type="string", length=180, nullable=true)
      */
     private $activationCode;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $confirmationToken;
 

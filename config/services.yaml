@@ -24,7 +24,7 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    App\Services\AccountActivation:
+    App\Services\AccountActivator:
         arguments:
             $activationAccountEmail: '%email.activation_account%'
 
