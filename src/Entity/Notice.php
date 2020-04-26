@@ -56,6 +56,12 @@ class Notice
      */
     private $amount;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", inversedBy="notices")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $account;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -169,5 +175,17 @@ class Notice
             'images' => $this->getImages(),
             'amount' => $this->getAmount(),
         ];
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(?Account $account): self
+    {
+        $this->account = $account;
+
+        return $this;
     }
 }

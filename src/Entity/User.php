@@ -53,6 +53,11 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Account", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $account;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -178,5 +183,22 @@ class User implements UserInterface
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
         ];
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account): self
+    {
+        $this->account = $account;
+
+        // set the owning side of the relation if necessary
+        if ($account->getUser() !== $this) {
+            $account->setUser($this);
+        }
+
+        return $this;
     }
 }
