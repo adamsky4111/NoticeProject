@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\Account;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Services\Interfaces\AccountActivatorInterface;
@@ -108,6 +109,7 @@ class SecurityService implements SecurityServiceInterface
 
         if ($isValid !== false) {
             $user->setIsActive(true);
+            $user->setAccount(new Account());
             $this->userService->saveUser($user);
             return true;
         }
