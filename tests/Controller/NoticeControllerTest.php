@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\Notice;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
