@@ -40,11 +40,10 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/ban/{id}", name="ban_user", methods={"PUT"})
-     * @param Request $request
      * @param $id
      * @return JsonResponse
      */
-    public function banUser($id, Request $request)
+    public function banUser($id): JsonResponse
     {
         $user = $this->userService->getUserById($id);
 
@@ -61,6 +60,32 @@ class AdminController extends AbstractController
         return $this->createResponse(
             true,
             'User is banned',
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @Route("/unban/{id}", name="unban_user", methods={"PUT"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function unbanUser($id): JsonResponse
+    {
+        $user = $this->userService->getUserById($id);
+
+        if ($user === null) {
+            return $this->createResponse(
+                false,
+                'User not found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $this->adminService->unBan($user);
+
+        return $this->createResponse(
+            true,
+            'User is unbanned',
             Response::HTTP_OK
         );
     }
