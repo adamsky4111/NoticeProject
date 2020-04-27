@@ -185,6 +185,7 @@ class User implements UserInterface
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
             'isActive' => $this->getIsActive(),
+            'account' =>($this->getAccount()) ? $this->getAccount()->toArray() : 'not exist'
         ];
     }
 
