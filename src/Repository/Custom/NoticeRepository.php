@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repository\Custom;
 
 use App\Entity\Notice;
@@ -32,9 +31,7 @@ class NoticeRepository implements NoticeRepositoryInterface
 
     public function findOneById($id)
     {
-        return $this->repository->findOneBy([
-            "id"=>$id,
-        ]);
+        return $this->repository->findOneBy(["id" => $id]);
     }
 
     public function deleteNotice($notice)

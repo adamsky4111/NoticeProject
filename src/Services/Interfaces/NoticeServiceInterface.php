@@ -4,10 +4,13 @@ namespace App\Services\Interfaces;
 
 use App\Entity\Notice;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
+use Symfony\Component\Security\Core\Security;
 
 interface NoticeServiceInterface
 {
-    public function __construct(UploadFilesServiceInterface $uploadFilesService, NoticeRepositoryInterface $noticeRepository);
+    public function __construct(UploadFilesServiceInterface $uploadFilesService,
+                                NoticeRepositoryInterface $noticeRepository,
+                                Security $security);
 
     public function getAll();
 

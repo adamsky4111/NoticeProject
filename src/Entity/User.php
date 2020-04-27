@@ -53,6 +53,11 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Account", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $account;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,8 +131,10 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee if user at activated give ROLE_USER
+        if ($this->isActive) {
+            $roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }
@@ -177,6 +184,25 @@ class User implements UserInterface
             'id' => $this->getId(),
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
+            'isActive' => $this->getIsActive(),
+            'account' =>($this->getAccount()) ? $this->getAccount()->toArray() : 'not exist'
         ];
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account): self
+    {
+        $this->account = $account;
+
+        // set the owning side of the relation if necessary
+        if ($account->getUser() !== $this) {
+            $account->setUser($this);
+        }
+
+        return $this;
     }
 }

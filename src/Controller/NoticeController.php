@@ -3,13 +3,14 @@
 namespace App\Controller;
 
 use App\Services\Interfaces\NoticeServiceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NoticeController
+class NoticeController extends AbstractController
 {
 
     private $noticeService;
@@ -39,7 +40,7 @@ class NoticeController
         if ($isOK) {
             return $this->createResponse(
                 true,
-                'Notice created',
+                'Notice create success',
                 Response::HTTP_CREATED
             );
         } else {
@@ -49,6 +50,15 @@ class NoticeController
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
+    }
+
+    public function createResponse($status, $message, $code)
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $this->translator->trans($message)
+        ], $code
+        );
     }
 
     /**
@@ -92,7 +102,7 @@ class NoticeController
         if ($isOK) {
             return $this->createResponse(
                 true,
-                'Notice updated',
+                'Notice update success',
                 Response::HTTP_OK
             );
         } else {
@@ -115,7 +125,7 @@ class NoticeController
         if ($isOK) {
             return $this->createResponse(
                 true,
-                'Notice deleted',
+                'Notice delete success',
                 Response::HTTP_OK
             );
         } else {
@@ -125,15 +135,6 @@ class NoticeController
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
-    }
-
-    public function createResponse($status, $message, $code)
-    {
-        return new JsonResponse([
-            'status' => $status,
-            'message' => $this->translator->trans($message)
-        ], $code
-        );
     }
 
 }
