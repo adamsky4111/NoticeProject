@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\AccountRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Doctrine\AccountRepository")
  */
 class Account
 {
@@ -165,5 +165,16 @@ class Account
         }
 
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'province' => $this->getProvince(),
+            'city' => $this->getCity(),
+            'phone' => $this->getPhone(),
+        ];
     }
 }

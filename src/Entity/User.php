@@ -184,6 +184,7 @@ class User implements UserInterface
             'id' => $this->getId(),
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
+            'isActive' => $this->getIsActive(),
         ];
     }
 
