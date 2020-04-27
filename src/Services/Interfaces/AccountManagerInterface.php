@@ -5,7 +5,7 @@ namespace App\Services\Interfaces;
 use App\Entity\Account;
 use App\Repository\Interfaces\AccountRepositoryInterface;
 
-interface AccountManagementInterface
+interface AccountManagerInterface
 {
     public function __construct(AccountRepositoryInterface $accountRepository);
 

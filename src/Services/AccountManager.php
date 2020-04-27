@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Entity\Account;
 use App\Repository\Interfaces\AccountRepositoryInterface;
-use App\Services\Interfaces\AccountManagementInterface;
+use App\Services\Interfaces\AccountManagerInterface;
 
-class AccountManagament implements AccountManagementInterface
+class AccountManager implements AccountManagerInterface
 {
     private $accountRepository;
 
@@ -34,5 +34,7 @@ class AccountManagament implements AccountManagementInterface
         }
 
         $this->accountRepository->saveAccountChanges($account);
+
+        return true;
     }
 }
