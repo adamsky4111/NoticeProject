@@ -90,7 +90,57 @@ class AdminController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/notice/activate/{id}", name="activate_notice", methods={"PUT"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function activateNotice($id): JsonResponse
+    {
+        $notice = $this->noticeService->getOneById($id);
 
+        if ($notice === null) {
+            return $this->createResponse(
+                false,
+                'Notice not found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $this->adminService->activateNotice($notice);
+
+        return $this->createResponse(
+            true,
+            'Notice is activated',
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @Route("/user/activate/{id}", name="activate_notice", methods={"PUT"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function activateUser($id): JsonResponse
+    {
+        $user = $this->userService->getUserById($id);
+
+        if ($user === null) {
+            return $this->createResponse(
+                false,
+                'User not found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $this->adminService->activateNotice($user);
+
+        return $this->createResponse(
+            true,
+            'User is activated',
+            Response::HTTP_OK
+        );
+    }
 
     public function createResponse($status, $message, $code)
     {
