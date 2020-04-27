@@ -9,7 +9,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -33,9 +33,9 @@ security:
             pattern:   ^/api/
             stateless: true
             anonymous: true
-        #            guard:
-        #                authenticators:
-        #                    - lexik_jwt_authentication.jwt_token_authenticator
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
         main:
             anonymous: true

@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Tests\Controller;
 
 use App\Entity\User;
@@ -140,7 +141,7 @@ class SecurityControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
-                'username' => 'foo@wp.get',
+                'username' => 'foo',
                 'password' => 'password',
             ])
         );
@@ -155,7 +156,7 @@ class SecurityControllerTest extends WebTestCase
             $client->request(
                 'POST',
                 $this->url . $this->route . 'forgot-password',
-            [],
+                [],
                 [],
                 ['CONTENT_TYPE' => 'application/json'],
                 json_encode([

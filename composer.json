@@ -23,10 +23,10 @@
         "symfony/yaml": "5.0.*"
     },
     "require-dev": {
+        "ext-gd": "*",
         "doctrine/doctrine-fixtures-bundle": "^3.3",
         "symfony/maker-bundle": "^1.14",
-        "symfony/phpunit-bridge": "^5.0",
-        "ext-gd": "*"
+        "symfony/phpunit-bridge": "^5.0"
     },
     "config": {
         "preferred-install": {

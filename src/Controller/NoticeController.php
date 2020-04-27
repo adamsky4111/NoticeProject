@@ -3,13 +3,14 @@
 namespace App\Controller;
 
 use App\Services\Interfaces\NoticeServiceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NoticeController
+class NoticeController extends AbstractController
 {
 
     private $noticeService;
@@ -49,6 +50,15 @@ class NoticeController
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
+    }
+
+    public function createResponse($status, $message, $code)
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $this->translator->trans($message)
+        ], $code
+        );
     }
 
     /**
@@ -125,15 +135,6 @@ class NoticeController
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
-    }
-
-    public function createResponse($status, $message, $code)
-    {
-        return new JsonResponse([
-            'status' => $status,
-            'message' => $this->translator->trans($message)
-        ], $code
-        );
     }
 
 }
