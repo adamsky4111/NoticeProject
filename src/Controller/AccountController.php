@@ -53,6 +53,7 @@ class AccountController extends AbstractController
             );
         }
     }
+
     public function createResponse($status, $message, $code)
     {
         return new JsonResponse([
