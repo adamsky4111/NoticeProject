@@ -36,8 +36,9 @@ abstract class AuthenticatedClientWebTestCase extends AbstractFixtureWebTestCase
             $this->authorizeClient(self::$notActivatedUser, 'username2');
         }
 
-        self::bootKernel();
+        parent::setUp();
     }
+
 
     protected function authorizeClient(KernelBrowser $client, $username = 'username', $password = 'password')
     {

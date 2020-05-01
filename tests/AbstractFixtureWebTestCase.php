@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * klasa została stworzona aby usprawnić dodawnia fixture do konkretnych testów
@@ -23,9 +24,16 @@ abstract class AbstractFixtureWebTestCase extends WebTestCase
      */
     private $fixtureLoader;
 
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     protected function setUp()
     {
         self::bootKernel();
+
+        $this->translator = $this->getTranslator();
     }
 
     protected function addFixture(FixtureInterface $fixture)
@@ -40,6 +48,11 @@ abstract class AbstractFixtureWebTestCase extends WebTestCase
         }
 
         return $this->fixtureLoader;
+    }
+
+    protected function getTranslator()
+    {
+        return self::$kernel->getContainer()->get('translator');
     }
 
     protected function executeFixtures()
