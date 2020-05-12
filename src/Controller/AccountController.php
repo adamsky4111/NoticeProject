@@ -48,7 +48,7 @@ class AccountController extends AbstractController
         } else {
             return $this->createResponse(
                 false,
-                'User account update failed',
+                'User not activated',
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
