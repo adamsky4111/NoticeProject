@@ -4,22 +4,18 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
+use App\Tests\AuthenticatedClientWebTestCase;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends AuthenticatedClientWebTestCase
 {
     private $url = 'http://localhost/';
 
     private $route = 'api/users/';
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
 
     /**
      * @var UserRepositoryInterface
@@ -31,14 +27,11 @@ class UserControllerTest extends WebTestCase
      */
     public function setUp()
     {
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
-        $this->entityManager = static::$kernel
-            ->getContainer()
-            ->get('doctrine.orm.default_entity_manager');
+        parent::setUp();
 
-        $this->userRepository = $this
-            ->entityManager
+        $this->userRepository = self::$kernel
+            ->getContainer()
+            ->get('doctrine.orm.default_entity_manager')
             ->getRepository(User::class);
     }
 
@@ -46,7 +39,7 @@ class UserControllerTest extends WebTestCase
     {
         if ($users = $this->userRepository->findAll()) {
             $user = $users[0];
-            $client = static::createClient();
+            $client = self::$client;
 
             $client->request(
                 'GET',
@@ -60,7 +53,8 @@ class UserControllerTest extends WebTestCase
 
     public function testGetAllUsers()
     {
-        $client = static::createClient();
+        $client = self::$client;
+
         $client->request(
             'GET',
             $this->url . $this->route
@@ -72,7 +66,7 @@ class UserControllerTest extends WebTestCase
     {
         if ($users = $this->userRepository->findAll()) {
             $user = $users[0];
-            $client = static::createClient();
+            $client = self::$client;
 
             $client->request(
                 'DELETE',
