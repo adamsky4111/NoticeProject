@@ -5,9 +5,6 @@ namespace App\Tests\Controller;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Tests\AuthenticatedClientWebTestCase;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -29,52 +26,69 @@ class UserControllerTest extends AuthenticatedClientWebTestCase
     {
         parent::setUp();
 
-        $this->userRepository = self::$kernel
-            ->getContainer()
+        $this->userRepository = self::$kernel->getContainer()
             ->get('doctrine.orm.default_entity_manager')
             ->getRepository(User::class);
     }
 
     public function testGetOne()
     {
-        if ($users = $this->userRepository->findAll()) {
-            $user = $users[0];
-            $client = self::$client;
+        $users = $this->userRepository->findAll();
+        $user = $users[0];
 
-            $client->request(
-                'GET',
-                $this->url . $this->route . $user->getUsername()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('no users in database.');
-        }
+        $client = clone self::$client;
+
+        $client->request(
+            'GET',
+            $this->url . $this->route . $user->getUsername()
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testGetAllUsers()
     {
-        $client = self::$client;
+        $client = clone self::$client;
 
         $client->request(
             'GET',
             $this->url . $this->route
         );
+
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testDelete()
     {
-        if ($users = $this->userRepository->findAll()) {
-            $user = $users[0];
-            $client = self::$client;
+        $users = $this->userRepository->findAll();
+        $user = $users[0];
+        $client = clone self::$client;
 
-            $client->request(
-                'DELETE',
-                $this->url . $this->route . $user->getUsername()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('no users in database.');
-        }
+        $client->request(
+            'DELETE',
+            $this->url . $this->route . $user->getUsername()
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User delete success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testDeleteIfWrongUsername()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'DELETE',
+            $this->url . $this->route . 'thereIsNoUsernameLikeThis'
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User delete failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 }
