@@ -43,7 +43,7 @@ class AccountControllerTest extends AuthenticatedClientWebTestCase
         $content = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $this->assertEquals($this->trans('User account update success'), $this->trans($content['message']));
+        $this->assertEquals($this->trans('User account update success'), $content['message']);
         $this->assertEquals(true, $content['status']);
     }
 
@@ -63,7 +63,35 @@ class AccountControllerTest extends AuthenticatedClientWebTestCase
         $content = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
-        $this->assertEquals($this->trans('User not activated'), $this->trans($content['message']));
+        $this->assertEquals($this->trans('User not activated'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
+
+    public function testActivatedUserGetMyNotices()
+    {
+        $client = clone self::$activatedUser;
+
+        $client->request(
+            'Get',
+            $this->route . 'my-notices'
+        );
+
+        $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
+    }
+
+    public function testNotActivatedUserGetMyNotices()
+    {
+        $client = clone self::$notActivatedUser;
+
+        $client->request(
+            'Get',
+            $this->route . 'my-notices'
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not activated'), $content['message']);
         $this->assertEquals(false, $content['status']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Services\Interfaces\AccountManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,8 +61,9 @@ class AccountController extends AbstractController
     public function getMyNotices()
     {
         $user = $this->getUser();
-        if ($user instanceof UserInterface && $user->getAccount !== null) {
-            $notices = $user->getAccount->getNotices();
+
+        if ($user instanceof UserInterface && $user->getAccount() !== null) {
+            $notices = $user->getAccount()->getNotices();
             $data = [];
 
             foreach ($notices as $notice) {
@@ -73,7 +75,7 @@ class AccountController extends AbstractController
 
         return $this->createResponse(
             false,
-            'Wrong user or no account',
+            'User not activated',
             Response::HTTP_NOT_ACCEPTABLE
         );
     }
