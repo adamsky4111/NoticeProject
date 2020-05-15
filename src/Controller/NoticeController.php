@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NoticeController extends AbstractController
@@ -31,6 +32,14 @@ class NoticeController extends AbstractController
      */
     public function add(Request $request): JsonResponse
     {
+        if ($this->getUser()->getAccount() === null) {
+            return $this->createResponse(
+                false,
+                'User not activated',
+                Response::HTTP_NOT_ACCEPTABLE
+            );
+        }
+
         $data = json_decode($request->getContent(), true);
         $isOK = $this->noticeService->saveNotice(
             $data,
@@ -132,7 +141,7 @@ class NoticeController extends AbstractController
             return $this->createResponse(
                 false,
                 'Notice delete failed',
-                Response::HTTP_NOT_ACCEPTABLE
+                Response::HTTP_NOT_FOUND
             );
         }
     }
