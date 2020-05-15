@@ -39,16 +39,19 @@ abstract class AuthenticatedClientWebTestCase extends AbstractFixtureWebTestCase
         parent::setUp();
     }
 
-
-    protected function authorizeClient(KernelBrowser $client, $username = 'username', $password = 'password')
+    protected function getPasswordEncoder()
     {
         /**
          * @var UserPasswordEncoderInterface $encoder
          */
         $encoder = self::$kernel->getContainer()->get('security.password_encoder');
+        return $encoder;
+    }
 
+    protected function authorizeClient(KernelBrowser $client, $username = 'username', $password = 'password')
+    {
+        $encoder = $this->getPasswordEncoder();
         $this->addFixture(new UsersForAuthorize($encoder));
-
         $this->executeFixtures();
 
         $client->request(

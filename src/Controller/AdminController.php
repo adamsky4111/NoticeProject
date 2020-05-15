@@ -117,7 +117,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/user/activate/{id}", name="activate_notice", methods={"PUT"})
+     * @Route("/user/activate/{id}", name="activate_user", methods={"PUT"})
      * @param $id
      * @return JsonResponse
      */
