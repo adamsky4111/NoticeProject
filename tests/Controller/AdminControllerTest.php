@@ -55,4 +55,37 @@ class AdminControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals($this->trans('User not found'), $content['message']);
         $this->assertEquals(false, $content['status']);
     }
+
+    public function testUnbanUser()
+    {
+        $users = $this->userRepository->findAll();
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            '/api/admin/unban/' . $users[0]->getId()
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User is unbanned'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testUnbanIfUserDoesntExist()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            '/api/admin/unban/' . -1
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not found'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
 }
