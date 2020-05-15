@@ -6,8 +6,6 @@ namespace App\Tests\Controller;
 use App\Entity\User;
 use App\Repository\Interfaces\UserRepositoryInterface;
 use App\Tests\AuthenticatedClientWebTestCase;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -61,11 +59,15 @@ class SecurityControllerTest extends AuthenticatedClientWebTestCase
             $this->url . $this->route . 'register',
             [],
             [],
-            array('CONTENT_TYPE' => 'application/json'),
+            ['CONTENT_TYPE' => 'application/json'],
             json_encode($this->user)
         );
 
+        $content = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User create success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
     }
 
     public function testIfUsernameAlreadyExist()
@@ -77,11 +79,15 @@ class SecurityControllerTest extends AuthenticatedClientWebTestCase
             $this->url . $this->route . 'register',
             [],
             [],
-            array('CONTENT_TYPE' => 'application/json'),
-            json_encode($this->userForEmailValidate)
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($this->userForUsernameValidate)
         );
 
+        $content = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Username taken'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
     public function testIfEmailAlreadyExist()
@@ -93,11 +99,35 @@ class SecurityControllerTest extends AuthenticatedClientWebTestCase
             $this->url . $this->route . 'register',
             [],
             [],
-            array('CONTENT_TYPE' => 'application/json'),
-            json_encode($this->userForUsernameValidate)
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($this->userForEmailValidate)
         );
 
+        $content = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Email taken'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
+
+    public function testIfUsernameAndEmailAlreadyExist()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'POST',
+            $this->url . $this->route . 'register',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($this->user)
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Username and Email taken'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
 //    public function testChangePassword()
@@ -140,26 +170,42 @@ class SecurityControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    public function testForgotPassword()
+    private function createForgotPasswordRequest($client, $email)
     {
-        if ($users = $this->userRepository->findAll()) {
-            $user = $users[0];
-            $client = clone self::$client;
+        $client->request(
+            'POST',
+            $this->url . $this->route . 'forgot-password',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode([
+                'email' => $email,
+            ])
+        );
+    }
+    public function testForgotPasswordIfEmailExist()
+    {
+        $client = clone self::$client;
 
-            $client->request(
-                'POST',
-                $this->url . $this->route . 'forgot-password',
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                json_encode([
-                    'email' => 'foo@wp.get',
-                ])
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('no users in database.');
-        }
+        $this->createForgotPasswordRequest($client, 'foo@wp.get');
 
+        $content = json_decode($client->getResponse()->getContent(),true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Reset password success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testForgotPasswordIfEmailDoesntExist()
+    {
+        $client = clone self::$client;
+
+        $this->createForgotPasswordRequest($client, 'thereIsNoEmailLikeThis@no');
+
+        $content = json_decode($client->getResponse()->getContent(),true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Reset password failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 }
