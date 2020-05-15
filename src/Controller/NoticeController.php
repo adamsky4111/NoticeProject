@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NoticeController extends AbstractController
@@ -26,7 +25,7 @@ class NoticeController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="new_offer", methods={"POST"})
+     * @Route("/new", name="new_notice", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -61,17 +60,8 @@ class NoticeController extends AbstractController
         }
     }
 
-    public function createResponse($status, $message, $code)
-    {
-        return new JsonResponse([
-            'status' => $status,
-            'message' => $this->translator->trans($message)
-        ], $code
-        );
-    }
-
     /**
-     * @Route("/{id}", name="get_one_offer", methods={"GET"})
+     * @Route("/{id}", name="get_one_notice", methods={"GET"})
      * @param $id
      * @return JsonResponse
      */
@@ -84,9 +74,25 @@ class NoticeController extends AbstractController
     }
 
     /**
-     * @Route("/", name="get_all_Offers", methods={"GET"})
+     * @Route("/", name="get_all_active_notices", methods={"GET"})
      */
     public function getAll(): JsonResponse
+    {
+        $notices = $this->noticeService->getAllActive();
+        $data = [];
+
+        foreach ($notices as $notice) {
+            $data[] = $notice->toArray();
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+
+    /**
+     * @Route("/active", name="get_all_notices", methods={"GET"})
+     */
+    public function getNotices()
     {
         $notices = $this->noticeService->getAll();
         $data = [];
@@ -99,7 +105,7 @@ class NoticeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="update_offer", methods={"PUT"})
+     * @Route("/{id}", name="update_notice", methods={"PUT"})
      * @param $id
      * @param Request $request
      * @return JsonResponse
@@ -124,7 +130,7 @@ class NoticeController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="delete_offer", methods={"DELETE"})
+     * @Route("/{id}", name="delete_notice", methods={"DELETE"})
      * @param $id
      * @return JsonResponse
      */
@@ -146,4 +152,12 @@ class NoticeController extends AbstractController
         }
     }
 
+    public function createResponse($status, $message, $code)
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $this->translator->trans($message)
+        ], $code
+        );
+    }
 }

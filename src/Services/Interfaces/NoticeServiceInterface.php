@@ -26,4 +26,5 @@ interface NoticeServiceInterface
 
     public function deleteNotice($id);
 
+    public function getAllActive();
 }
