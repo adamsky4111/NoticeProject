@@ -27,7 +27,7 @@ class AccountControllerTest extends AuthenticatedClientWebTestCase
         parent::setUp();
     }
 
-    public function testEditAccount()
+    public function testActivatedUserEditAccount()
     {
         $client = clone self::$activatedUser;
 
@@ -40,6 +40,30 @@ class AccountControllerTest extends AuthenticatedClientWebTestCase
             json_encode($this->account)
         );
 
+        $content = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User account update success'), $this->trans($content['message']));
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testNotActivatedUserEditAccount()
+    {
+        $client = clone self::$notActivatedUser;
+
+        $client->request(
+            'PUT',
+            $this->route . 'edit',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($this->account)
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not activated'), $this->trans($content['message']));
+        $this->assertEquals(false, $content['status']);
     }
 }

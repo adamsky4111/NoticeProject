@@ -61,6 +61,15 @@ abstract class AbstractFixtureWebTestCase extends WebTestCase
 
     }
 
+    protected function trans(string $string)
+    {
+        if ($this->translator == null) {
+            $this->getTranslator();
+        }
+
+        return $this->translator->trans($string);
+    }
+
     private function getFixtureExecutor()
     {
         if ($this->fixtureExecutor === null) {
