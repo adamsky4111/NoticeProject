@@ -26,7 +26,6 @@ class AdminControllerTest extends AuthenticatedClientWebTestCase
     public function testBanUser()
     {
         $users = $this->userRepository->findAll();
-
         $client = clone self::$client;
 
         $client->request(
@@ -39,5 +38,21 @@ class AdminControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $this->assertEquals($this->trans('User is banned'), $content['message']);
         $this->assertEquals(true, $content['status']);
+    }
+
+    public function testBanIfUserDoesntExist()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            '/api/admin/ban/' . -1
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not found'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 }
