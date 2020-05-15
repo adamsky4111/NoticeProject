@@ -3,7 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
-use App\Repository\Interfaces\UserRepositoryInterface;
+use App\Repository\Doctrine\UserRepository;
 use App\Tests\AuthenticatedClientWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +15,7 @@ class UserControllerTest extends AuthenticatedClientWebTestCase
     private $route = 'api/users/';
 
     /**
-     * @var UserRepositoryInterface
+     * @var UserRepository
      */
     private $userRepository;
 
