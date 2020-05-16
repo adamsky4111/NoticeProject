@@ -41,7 +41,7 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
     {
         $client = clone self::$activatedUser;
 
-        $this->createAddNoticeRequest($client);
+        $this->createAddNoticeRequest($client, $this->notice);
 
         $content = json_decode($client->getResponse()->getContent(), true);
 
@@ -50,7 +50,20 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(true, $content['status']);
     }
 
-    private function createAddNoticeRequest($client)
+    public function testAddNoticeByActivatedUserWithWrongContentJson()
+    {
+        $client = clone self::$activatedUser;
+
+        $this->createAddNoticeRequest($client, []);
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice create failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
+
+    private function createAddNoticeRequest($client, $notice)
     {
         $file = tempnam(sys_get_temp_dir(), 'upl');
         imagejpeg(imagecreatetruecolor(10, 10), $file);
@@ -66,7 +79,7 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
             [],
             $files,
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode($this->notice)
+            json_encode($notice)
         );
     }
 
@@ -74,7 +87,7 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
     {
         $client = clone self::$notActivatedUser;
 
-        $this->createAddNoticeRequest($client);
+        $this->createAddNoticeRequest($client, $this->notice);
 
         $content = json_decode($client->getResponse()->getContent(), true);
 
@@ -104,7 +117,7 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    public function testPut()
+    public function testUpdateNotice()
     {
         $notices = $this->noticeRepository->findAll();
         $notice = $notices[0];
@@ -124,6 +137,28 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $this->assertEquals($this->trans('Notice update success'), $content['message']);
         $this->assertEquals(true, $content['status']);
+    }
+
+    public function testUpdateNoticeIfNoContent()
+    {
+        $notices = $this->noticeRepository->findAll();
+        $notice = $notices[0];
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            $this->url . 'api/notices/' . $notice->getId(),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            []
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice update failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
     public function testGetOne()
