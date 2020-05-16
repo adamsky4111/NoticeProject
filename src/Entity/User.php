@@ -85,20 +85,16 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getIsBanned()
     {
         return $this->isBanned;
     }
 
-    /**
-     * @param mixed $isBanned
-     */
-    public function setIsBanned($isBanned): void
+    public function setIsBanned($isBanned): self
     {
         $this->isBanned = $isBanned;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -149,6 +145,8 @@ class User implements UserInterface
     public function setUsername(string $username)
     {
         $this->username = $username;
+
+        return $this;
     }
 
     /**

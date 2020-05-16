@@ -2,18 +2,13 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Account;
 use App\Entity\Notice;
-use App\Entity\User;
 use App\Repository\Interfaces\NoticeRepositoryInterface;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use App\Tests\AuthenticatedClientWebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
-class NoticeControllerTest extends WebTestCase
+class NoticeControllerTest extends AuthenticatedClientWebTestCase
 {
     private $url = 'http://localhost/';
 
@@ -27,11 +22,6 @@ class NoticeControllerTest extends WebTestCase
     ];
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var NoticeRepositoryInterface
      */
     private $noticeRepository;
@@ -41,25 +31,40 @@ class NoticeControllerTest extends WebTestCase
      */
     public function setUp()
     {
-
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
-        $this->entityManager = static::$kernel
-            ->getContainer()
-            ->get('doctrine.orm.default_entity_manager');
-
-        $this->noticeRepository = $this
-            ->entityManager
+        parent::setUp();
+        $this->noticeRepository = self::$kernel->getContainer()
+            ->get('doctrine.orm.entity_manager')
             ->getRepository(Notice::class);
-
-
     }
 
-    public function testAddNotice()
+    public function testAddNoticeByActivatedUser()
     {
-        $this->createUser();
+        $client = clone self::$activatedUser;
 
-        $client = $this->createAuthenticatedClient();
+        $this->createAddNoticeRequest($client, $this->notice);
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice create success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testAddNoticeByActivatedUserWithWrongContentJson()
+    {
+        $client = clone self::$activatedUser;
+
+        $this->createAddNoticeRequest($client, []);
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice create failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
+
+    private function createAddNoticeRequest($client, $notice)
+    {
         $file = tempnam(sys_get_temp_dir(), 'upl');
         imagejpeg(imagecreatetruecolor(10, 10), $file);
         $file = new UploadedFile(
@@ -67,112 +72,140 @@ class NoticeControllerTest extends WebTestCase
             'image.jpeg'
         );
         $files[] = $file;
+
         $client->request(
             'POST',
             $this->url . 'api/notices/new',
             [],
             $files,
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode($this->notice)
+            json_encode($notice)
         );
-        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
     }
 
-    private function createUser()
+    public function testAddNoticeByNotActivatedUser()
     {
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
+        $client = clone self::$notActivatedUser;
 
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
-        $user = new User();
-        $user->setEmail('email@email.com');
-        $user->setUsername('username');
-        $user->setPassword($encoder->encodePassword($user, 'password'));
-        $user->setIsActive(true);
-        $user->setAccount(new Account());
+        $this->createAddNoticeRequest($client, $this->notice);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not activated'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
-    protected function createAuthenticatedClient($username = 'username', $password = 'password')
-    {
-        $client = static::createClient();
-        $client->request(
-            'POST',
-            '/api/login_check',
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'username' => $username,
-                'password' => $password,
-            ])
-        );
-
-        $data = json_decode($client->getResponse()->getContent(), true);
-
-        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
-
-        return $client;
-    }
+//    public function testAddNoticeByNotAuthorizatedUser()
+//    {
+//        $client = clone self::$client;
+//
+//        $this->createAddNoticeRequest($client);
+//
+//        $content = json_decode($client->getResponse()->getContent(), true);
+//
+//        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
+//        $this->assertEquals($this->trans('Not authorizated'), $content['message']);
+//        $this->assertEquals(false, $content['status']);
+//    }
 
     public function testGetNotices()
     {
-        $client = static::createClient();
+        $client = clone self::$client;
+
         $client->request('GET', $this->url . 'api/notices/');
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    public function testPut()
+    public function testUpdateNotice()
     {
-        if ($notices = $this->noticeRepository->findAll()) {
-            $notice = $notices[0];
-            $client = static::createClient();
+        $notices = $this->noticeRepository->findAll();
+        $notice = $notices[0];
+        $client = clone self::$client;
 
-            $client->request(
-                'PUT',
-                $this->url . 'api/notices/' . $notice->getId(),
-                [],
-                [],
-                array('CONTENT_TYPE' => 'application/json'),
-                json_encode($this->notice)
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('Database is empty');
-        }
+        $client->request(
+            'PUT',
+            $this->url . 'api/notices/' . $notice->getId(),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($this->notice)
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice update success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testUpdateNoticeIfNoContent()
+    {
+        $notices = $this->noticeRepository->findAll();
+        $notice = $notices[0];
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            $this->url . 'api/notices/' . $notice->getId(),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            []
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice update failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
     public function testGetOne()
     {
-        if ($notices = $this->noticeRepository->findAll()) {
-            $notice = $notices[0];
-            $client = static::createClient();
+        $notices = $this->noticeRepository->findAll();
+        $notice = $notices[0];
+        $client = clone self::$client;
 
-            $client->request(
-                'GET',
-                $this->url . 'api/notices/' . $notice->getId()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('Database is empty');
-        }
+        $client->request(
+            'GET',
+            $this->url . 'api/notices/' . $notice->getId()
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testDelete()
     {
-        if ($notices = $this->noticeRepository->findAll()) {
-            $notice = $notices[0];
-            $client = static::createClient();
+        $notices = $this->noticeRepository->findAll();
+        $notice = $notices[0];
+        $client = clone self::$client;
 
-            $client->request(
-                'DELETE',
-                $this->url . 'api/notices/' . $notice->getId()
-            );
-            $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        } else {
-            throw new Exception('Database is empty');
-        }
+        $client->request(
+            'DELETE',
+            $this->url . 'api/notices/' . $notice->getId()
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice delete success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
+    public function testDeleteWrongId()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'DELETE',
+            $this->url . 'api/notices/' . -1
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('Notice delete failed'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 }

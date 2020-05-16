@@ -24,7 +24,7 @@ class NoticeRepository implements NoticeRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function  findAll()
+    public function findAll()
     {
         return $this->repository->findAll();
     }
@@ -38,5 +38,10 @@ class NoticeRepository implements NoticeRepositoryInterface
     {
         $this->entityManager->remove($notice);
         $this->entityManager->flush();
+    }
+
+    public function findAllActive()
+    {
+        return $this->repository->findBy(['isActive' => false]);
     }
 }

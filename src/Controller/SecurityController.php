@@ -68,7 +68,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/activate", name="activate_user", methods={"GET"})
+     * @Route("/api/security/activate", name="activate_user", methods={"GET"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -126,7 +126,7 @@ class SecurityController extends AbstractController
             return $this->createResponse(
                 false,
                 'Reset password failed',
-                Response::HTTP_NOT_ACCEPTABLE
+                Response::HTTP_NOT_FOUND
             );
         }
     }

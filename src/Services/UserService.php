@@ -39,7 +39,7 @@ class UserService implements UserServiceInterface
     public function deleteUser($username)
     {
         if (!$user = $this->getUserByUsername($username)) {
-            throw new NotFoundHttpException('error, wrong user index');
+            return false;
         };
         $this->repository->delete($user);
 
