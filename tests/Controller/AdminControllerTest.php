@@ -143,6 +143,34 @@ class AdminControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals(false, $content['status']);
     }
 
+    public function testActivateExistingUser()
+    {
+        $users = $this->userRepository->findAll();
+        $notActivatedUser = null;
+        foreach ($users as $user) {
+            if ($user->getIsActive() === false) {
+                $notActivatedUser = $user;
+            }
+        }
+
+        if ($notActivatedUser === null) {
+            throw new \Exception('There is no not activated user');
+        }
+
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            '/api/admin/user/activate/' . $notActivatedUser->getId()
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User is activated'), $content['message']);
+        $this->assertEquals(true, $content['status']);
+    }
+
     public function testActivateNotExistingUser()
     {
         $client = clone self::$client;

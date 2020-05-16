@@ -91,7 +91,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/notice/activate/{id}", name="activate_notice", methods={"PUT"})
+     * @Route("/notice/activate/{id}", name="activate_notice_by_admin", methods={"PUT"})
      * @param $id
      * @return JsonResponse
      */
@@ -117,7 +117,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/user/activate/{id}", name="activate_user", methods={"PUT"})
+     * @Route("/user/activate/{id}", name="activate_user_by_admin", methods={"PUT"})
      * @param $id
      * @return JsonResponse
      */
@@ -133,7 +133,7 @@ class AdminController extends AbstractController
             );
         }
 
-        $this->adminService->activateNotice($user);
+        $this->adminService->activateUser($user);
 
         return $this->createResponse(
             true,
