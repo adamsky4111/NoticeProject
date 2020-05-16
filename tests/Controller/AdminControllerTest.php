@@ -142,4 +142,20 @@ class AdminControllerTest extends AuthenticatedClientWebTestCase
         $this->assertEquals($this->trans('Notice not found'), $content['message']);
         $this->assertEquals(false, $content['status']);
     }
+
+    public function testActivateNotExistingUser()
+    {
+        $client = clone self::$client;
+
+        $client->request(
+            'PUT',
+            '/api/admin/user/activate/' . -1
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not found'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
 }
