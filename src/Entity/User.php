@@ -18,9 +18,34 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isBanned;
+
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="string", length=180, nullable=true)
+     */
+    private $activationCode;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $confirmationToken;
 
     /**
      * @ORM\Column(type="json")
@@ -33,9 +58,43 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Account", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $account;
+
+    public function __construct()
+    {
+        $this->setIsBanned(false);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getIsBanned()
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned($isBanned): self
+    {
+        $this->isBanned = $isBanned;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -49,6 +108,29 @@ class User implements UserInterface
 
         return $this;
     }
+    public function getActivationCode(): ?string
+    {
+        return $this->activationCode;
+    }
+
+    public function setActivationCode(string $activationCode): self
+    {
+        $this->activationCode = $activationCode;
+
+        return $this;
+    }
+
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken(string $confirmationToken): self
+    {
+        $this->confirmationToken = $confirmationToken;
+
+        return $this;
+    }
 
     /**
      * A visual identifier that represents this user.
@@ -57,7 +139,14 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->username;
+    }
+
+    public function setUsername(string $username)
+    {
+        $this->username = $username;
+
+        return $this;
     }
 
     /**
@@ -66,8 +155,10 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee if user at activated give ROLE_USER
+        if ($this->isActive) {
+            $roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }
@@ -84,7 +175,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
@@ -109,5 +200,33 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'username' => $this->getUsername(),
+            'email' => $this->getEmail(),
+            'isActive' => $this->getIsActive(),
+            'account' =>($this->getAccount()) ? $this->getAccount()->toArray() : 'not exist'
+        ];
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account): self
+    {
+        $this->account = $account;
+
+        // set the owning side of the relation if necessary
+        if ($account->getUser() !== $this) {
+            $account->setUser($this);
+        }
+
+        return $this;
     }
 }

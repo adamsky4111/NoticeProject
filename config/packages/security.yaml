@@ -9,7 +9,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -24,14 +24,10 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        register:
-            pattern: ^/register
-            stateless: true
-            anonymous: true
-
         api:
             pattern:   ^/api/
             stateless: true
+            anonymous: true
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
@@ -43,6 +39,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/security/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/notices, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users, roles: ADMIN_ROLE }
+        - { path: ^/api/notices/new, roles: USER_ROLE }
+        - { path: ^/api/security/activate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/security/forgot-password, roles: IS_AUTHENTICATED_ANONUMOUSLY }
+        - { path: ^/api/security/change-password/, roles: USER_ROLE }
+        - { path: ^/api/account, roles: USER_ROLE }
+        - { path: ^/api/admin, roles: ADMIN_ROLE }
