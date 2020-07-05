@@ -151,7 +151,7 @@ class NoticeControllerTest extends AuthenticatedClientWebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            []
+            null
         );
 
         $content = json_decode($client->getResponse()->getContent(), true);
