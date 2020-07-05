@@ -24,11 +24,6 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        register:
-            pattern: ^/register
-            stateless: true
-            anonymous: true
-
         api:
             pattern:   ^/api/
             stateless: true
@@ -45,5 +40,12 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/offers, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/security/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/notices, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users, roles: ADMIN_ROLE }
+        - { path: ^/api/notices/new, roles: USER_ROLE }
+        - { path: ^/api/security/activate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/security/forgot-password, roles: IS_AUTHENTICATED_ANONUMOUSLY }
+        - { path: ^/api/security/change-password/, roles: USER_ROLE }
+        - { path: ^/api/account, roles: USER_ROLE }
+        - { path: ^/api/admin, roles: ADMIN_ROLE }

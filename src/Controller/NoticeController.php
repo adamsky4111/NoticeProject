@@ -74,7 +74,7 @@ class NoticeController extends AbstractController
     }
 
     /**
-     * @Route("/", name="get_all_active_notices", methods={"GET"})
+     * @Route("/active", name="get_all_active_notices", methods={"GET"})
      */
     public function getAll(): JsonResponse
     {
@@ -90,7 +90,7 @@ class NoticeController extends AbstractController
 
 
     /**
-     * @Route("/active", name="get_all_notices", methods={"GET"})
+     * @Route("/", name="get_all_notices", methods={"GET"})
      */
     public function getNotices()
     {
