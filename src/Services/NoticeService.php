@@ -99,4 +99,9 @@ class NoticeService implements NoticeServiceInterface
 
         return true;
     }
+
+    public function getAllActive()
+    {
+        return $this->noticeRepository->findAllActive();
+    }
 }

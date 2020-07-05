@@ -2,20 +2,14 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Account;
-use App\Entity\User;
-use App\Repository\Interfaces\UserRepositoryInterface;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\AuthenticatedClientWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class AccountControllerTest extends WebTestCase
+class AccountControllerTest extends AuthenticatedClientWebTestCase
 {
-    private $url = 'http://localhost/';
 
-    private $route = 'api/account/';
+    private $route = '/api/account/';
 
     private $account = [
         'firstName' => 'juzek',
@@ -26,88 +20,78 @@ class AccountControllerTest extends WebTestCase
     ];
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var UserRepositoryInterface
-     */
-    private $userRepository;
-
-    /**
      * {@inheritDoc}
      */
     public function setUp()
     {
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
-        $this->entityManager = static::$kernel
-            ->getContainer()
-            ->get('doctrine.orm.default_entity_manager');
-
-        $this->userRepository = $this
-            ->entityManager
-            ->getRepository(User::class);
-
-
+        parent::setUp();
     }
 
-    public function testEditAccount()
+    public function testActivatedUserEditAccount()
     {
-        $this->createUser();
-        $client = $this->createAuthenticatedClient();
+        $client = clone self::$activatedUser;
 
         $client->request(
             'PUT',
-            $this->url . $this->route . 'edit',
+            $this->route . 'edit',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode($this->account)
         );
 
+        $content = json_decode($client->getResponse()->getContent(), true);
+
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User account update success'), $content['message']);
+        $this->assertEquals(true, $content['status']);
     }
 
-    private function createUser()
+    public function testNotActivatedUserEditAccount()
     {
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
+        $client = clone self::$notActivatedUser;
 
-        $encoder = static::$kernel->getContainer()->get('security.password_encoder');
-        $user = new User();
-        $user->setEmail('email@email.com');
-        $user->setUsername('username');
-        $user->setPassword($encoder->encodePassword($user, 'password'));
-        $user->setIsActive(true);
-        $user->setAccount(new Account());
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-    }
-
-    protected function createAuthenticatedClient($username = 'username', $password = 'password')
-    {
-        $client = static::createClient();
         $client->request(
-            'POST',
-            '/api/login_check',
+            'PUT',
+            $this->route . 'edit',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'username' => $username,
-                'password' => $password,
-            ])
+            json_encode($this->account)
         );
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $content = json_decode($client->getResponse()->getContent(), true);
 
-        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
-
-        return $client;
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not activated'), $content['message']);
+        $this->assertEquals(false, $content['status']);
     }
 
+    public function testActivatedUserGetMyNotices()
+    {
+        $client = clone self::$activatedUser;
 
+        $client->request(
+            'Get',
+            $this->route . 'my-notices'
+        );
+
+        $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
+    }
+
+    public function testNotActivatedUserGetMyNotices()
+    {
+        $client = clone self::$notActivatedUser;
+
+        $client->request(
+            'Get',
+            $this->route . 'my-notices'
+        );
+
+        $content = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $client->getResponse()->getStatusCode());
+        $this->assertEquals($this->trans('User not activated'), $content['message']);
+        $this->assertEquals(false, $content['status']);
+    }
 }

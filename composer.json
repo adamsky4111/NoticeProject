@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "fabpot/goutte": "^4.0",
+        "fzaninotto/faker": "^1.9",
         "guzzlehttp/guzzle": "^6.5",
         "lexik/jwt-authentication-bundle": "^2.6",
         "sensio/framework-extra-bundle": "^5.5",

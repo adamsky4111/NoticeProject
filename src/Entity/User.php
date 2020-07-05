@@ -23,6 +23,11 @@ class User implements UserInterface
     private $isActive;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isBanned;
+
+    /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
@@ -58,6 +63,11 @@ class User implements UserInterface
      */
     private $account;
 
+    public function __construct()
+    {
+        $this->setIsBanned(false);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +81,18 @@ class User implements UserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getIsBanned()
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned($isBanned): self
+    {
+        $this->isBanned = $isBanned;
 
         return $this;
     }
@@ -123,6 +145,8 @@ class User implements UserInterface
     public function setUsername(string $username)
     {
         $this->username = $username;
+
+        return $this;
     }
 
     /**

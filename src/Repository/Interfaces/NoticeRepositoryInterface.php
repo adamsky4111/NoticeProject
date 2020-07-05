@@ -8,6 +8,8 @@ interface NoticeRepositoryInterface
 
     public function findAll();
 
+    public function findAllActive();
+
     public function findOneById($id);
 
     public function deleteNotice($notice);

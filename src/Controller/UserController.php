@@ -86,7 +86,7 @@ class UserController extends AbstractController
             return $this->createResponse(
                 false,
                 'User delete failed',
-                Response::HTTP_NOT_ACCEPTABLE);
+                Response::HTTP_NOT_FOUND);
         }
     }
 
